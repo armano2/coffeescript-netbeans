@@ -11,8 +11,10 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-package coffeescript.nb;
+package coffeescript.nb.core.embedding;
 
+import coffeescript.nb.core.CoffeeScriptLanguage;
+import coffeescript.nb.core.Constants;
 import java.util.Collection;
 import java.util.Collections;
 import javax.swing.text.Document;
@@ -94,7 +96,7 @@ public class CoffeeScriptHTMLParserTask extends ParserResultTask<Result> {
                             }
                         }
                     }
-                    if ((src == null) && (type != null) && type.contains(CoffeeScriptLanguage.MIME_TYPE)) {
+                    if ((src == null) && (type != null) && type.contains(Constants.MIME_TYPE)) {
                         inCoffeeScript = true;
                     }
                 }

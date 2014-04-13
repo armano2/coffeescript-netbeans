@@ -11,8 +11,10 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-package coffeescript.nb;
+package coffeescript.nb.core;
 
+import coffeescript.nb.core.CoffeeScriptLanguage;
+import coffeescript.nb.core.CoffeeScriptTokenId;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -43,7 +45,7 @@ public class CoffeeScriptSemanticAnalyzer extends SemanticAnalyzer {
         int start = 0;
         while (ts.moveNext()) {
             Token<CoffeeScriptTokenId> token = ts.token();
-            switch (token.id()) {
+            switch (token.id().getTokenEnum()) {
                 case LBRACKET:
                     start =  ts.offset();
                     break;

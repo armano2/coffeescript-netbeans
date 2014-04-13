@@ -11,8 +11,10 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-package coffeescript.nb;
+package coffeescript.nb.core;
 
+import coffeescript.nb.parser.ParseActionLegacy;
+import coffeescript.nb.parser.CoffeeScriptParser;
 import java.util.Collection;
 import java.util.Collections;
 import org.netbeans.modules.parsing.api.Snapshot;
@@ -26,9 +28,9 @@ import org.openide.filesystems.FileObject;
 /**
  * @author Denis Stepanov
  */
-public class CoffeeScriptAutocompileTask extends ParserResultTask<CoffeeScriptParser.ParsingResult> {
+public class CoffeeScriptAutocompileTask extends ParserResultTask<ParseActionLegacy.ParsingResult> {
 
-    public void run(final CoffeeScriptParser.ParsingResult result, SchedulerEvent event) {
+    public void run(final ParseActionLegacy.ParsingResult result, SchedulerEvent event) {
         if ((result != null) && !CoffeeScriptAutocompileContext.get().isEnabled(result.getSnapshot().getSource().getFileObject())) {
             return;
         }

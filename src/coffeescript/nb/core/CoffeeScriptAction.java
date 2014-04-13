@@ -11,9 +11,9 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-package coffeescript.nb;
+package coffeescript.nb.core;
 
-import coffeescript.nb.CoffeeScriptCompiler.CompilerResult;
+import coffeescript.nb.core.CoffeeScriptCompiler.CompilerResult;
 import coffeescript.nb.options.CoffeeScriptSettings;
 import java.awt.event.ActionEvent;
 import java.util.Collection;

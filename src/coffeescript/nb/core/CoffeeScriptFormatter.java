@@ -11,8 +11,12 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-package coffeescript.nb;
+package coffeescript.nb.core;
 
+import coffeescript.nb.antlr.lexer.TokenEnumLexer;
+import coffeescript.nb.core.CoffeeScriptLanguage;
+import coffeescript.nb.core.CoffeeScriptTokenId;
+import coffeescript.nb.options.CoffeeScriptSettings;
 import java.util.Collection;
 import java.util.Deque;
 import java.util.LinkedList;
@@ -33,6 +37,7 @@ import org.openide.util.Exceptions;
 public class CoffeeScriptFormatter implements Formatter {
     
     public void reformat(Context context, ParserResult compilationInfo) {
+        if(CoffeeScriptSettings.get().isLegacy()) return;
         TokenHierarchy<CoffeeScriptTokenId> th = createTokenHierarchy(context);
         TokenSequence<CoffeeScriptTokenId> ts = th.tokenSequence(CoffeeScriptLanguage.getLanguage());
         Collection<IndentChange> indentChanges = new TreeSet<IndentChange>();
@@ -41,7 +46,7 @@ public class CoffeeScriptFormatter implements Formatter {
             int currentLineStartOffset = 0;
             while (ts.moveNext()) {
                 Token<CoffeeScriptTokenId> token = ts.offsetToken();
-                if (token.id() == CoffeeScriptTokenId.WHITESPACE || token.id() == CoffeeScriptTokenId.EOL) {
+                if (token.id().equals(TokenEnumLexer.WHITESPACE_LEG) || token.id().equals(TokenEnumLexer.EOL_LEG)) {
                     continue;
                 }
                 int tokenOffset = token.offset(th);

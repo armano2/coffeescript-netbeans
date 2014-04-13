@@ -12,12 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package coffeescript.nb;
+package coffeescript.nb.core.embedding;
 
+import coffeescript.nb.core.CoffeeScriptLexerBase;
 import org.netbeans.api.lexer.Token;
 import org.netbeans.spi.lexer.LexerInput;
 import org.netbeans.spi.lexer.LexerRestartInfo;
-import static coffeescript.nb.CoffeeScriptRegexpTokenId.*;
+import static coffeescript.nb.core.embedding.CoffeeScriptRegexpTokenId.*;
 
 /**
  *

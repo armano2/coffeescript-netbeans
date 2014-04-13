@@ -12,8 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package coffeescript.nb;
+package coffeescript.nb.core.embedding;
 
+import coffeescript.nb.core.CoffeeScriptLanguage;
 import java.util.Collection;
 import java.util.EnumSet;
 import org.netbeans.api.lexer.InputAttributes;

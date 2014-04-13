@@ -12,12 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package coffeescript.nb;
+package coffeescript.nb.core;
 
+import coffeescript.nb.lexer.CoffeeScriptLexer;
+import coffeescript.nb.navigator.GrammarDescriptor;
 import java.io.IOException;
+import java.util.Collection;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import org.netbeans.api.project.Project;
 import org.openide.filesystems.FileObject;
 import org.openide.loaders.DataNode;
 import org.openide.loaders.DataObjectExistsException;
+import org.openide.loaders.DataShadow;
 import org.openide.loaders.MultiDataObject;
 import org.openide.loaders.MultiFileLoader;
 import org.openide.nodes.CookieSet;
@@ -25,6 +32,9 @@ import org.openide.nodes.Node;
 import org.openide.nodes.Children;
 import org.openide.util.Lookup;
 import org.openide.text.DataEditorSupport;
+import org.openide.util.Utilities;
+import org.openide.util.lookup.AbstractLookup;
+import org.openide.util.lookup.InstanceContent;
 import org.openide.util.lookup.Lookups;
 import org.openide.util.lookup.ProxyLookup;
 
@@ -33,10 +43,20 @@ import org.openide.util.lookup.ProxyLookup;
  * @author Denis Stepanov
  */
 public class CoffeeScriptDataObject extends MultiDataObject {
+    
+    private final InstanceContent content = new InstanceContent();
+    private final Lookup lookup;
 
     public CoffeeScriptDataObject(FileObject pf, MultiFileLoader loader) throws DataObjectExistsException, IOException {
         super(pf, loader);
         CookieSet cookies = getCookieSet();
+        Project project = Utilities.actionsGlobalContext().lookup(Project.class);
+//        content.add(project);
+        this.lookup = new ProxyLookup(new Lookup[] {
+            getCookieSet().getLookup(),
+            Lookups.fixed(new CoffeeScriptSourceEncodingQuery()),
+            new AbstractLookup(content)
+        });
         cookies.add((Node.Cookie) DataEditorSupport.create(this, getPrimaryEntry(), cookies));
     }
 
@@ -47,10 +67,23 @@ public class CoffeeScriptDataObject extends MultiDataObject {
 
     @Override
     public Lookup getLookup() {
-        return new ProxyLookup(new Lookup[] {
-            getCookieSet().getLookup(),
-            Lookups.fixed(new CoffeeScriptSourceEncodingQuery())
-        });
+        return lookup;
+    }
+
+    public void publishGrammarDescriptor(GrammarDescriptor descriptor)  {
+        Collection<? extends GrammarDescriptor> allDescriptors = lookup.lookupAll(GrammarDescriptor.class);
+        for (GrammarDescriptor desc : allDescriptors) {
+            content.remove(desc);
+        }
+        content.add(descriptor);
+    }
+    
+    public <T extends Object> void replaceAndPublish(T object, Class<T> type)  {
+        Collection<? extends T> allDescriptors = lookup.lookupAll(type);
+        for (T desc : allDescriptors) {
+            content.remove(desc);
+        }
+        content.add(object);
     }
     
 }

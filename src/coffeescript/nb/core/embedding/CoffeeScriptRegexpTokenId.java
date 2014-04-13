@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package coffeescript.nb;
+package coffeescript.nb.core.embedding;
 
 import org.netbeans.api.lexer.TokenId;
 
@@ -20,14 +20,15 @@ import org.netbeans.api.lexer.TokenId;
  *
  * @author Denis Stepanov
  */
-public enum CoffeeScriptStringTokenId implements TokenId {
+public enum CoffeeScriptRegexpTokenId implements TokenId {
 
-    STRING("string"),
-    EMBEDDED("embedded");
+    REGEXP("regexp"),
+    EMBEDDED("embedded"),
+    COMMENT("comment");
     //
     private String category;
 
-    private CoffeeScriptStringTokenId(String category) {
+    private CoffeeScriptRegexpTokenId(String category) {
         this.category = category;
     }
 

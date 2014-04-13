@@ -11,7 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-package coffeescript.nb;
+package coffeescript.nb.core;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -70,10 +70,11 @@ public class CoffeeScriptRhinoCompiler implements CoffeeScriptCompiler {
             ctx.setInstructionObserverThreshold(1);
             ctx.setOptimizationLevel(-1);
             Scriptable scope = ctx.newObject(ctx.initStandardObjects());
-            getScriptFromClasspath("coffeescript/nb/resources/coffee-script.js").exec(ctx, scope);
+            getScriptFromClasspath(Constants.COFFEE_SCRIPT_JS).exec(ctx, scope);
             scope.put("code", scope, code);
             String options = String.format("{bare: %b}", bare);
             String script = String.format("CoffeeScript.compile(code, %s);", options);
+            
             return (String) getScriptFromString(script).exec(ctx, scope);
 
         } finally {

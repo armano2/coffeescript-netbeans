@@ -11,12 +11,13 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-package coffeescript.nb;
+package coffeescript.nb.core;
 
+import coffeescript.nb.parser.CoffeeScriptParser;
+import coffeescript.nb.options.CoffeeScriptSettings;
 import org.netbeans.api.lexer.Language;
 import org.netbeans.modules.csl.api.Formatter;
 import org.netbeans.modules.csl.api.SemanticAnalyzer;
-import org.netbeans.modules.csl.api.StructureScanner;
 import org.netbeans.modules.csl.spi.DefaultLanguageConfig;
 import org.netbeans.modules.csl.spi.LanguageRegistration;
 import org.netbeans.modules.parsing.spi.Parser;
@@ -25,17 +26,12 @@ import org.netbeans.modules.parsing.spi.Parser;
  *
  * @author Denis Stepanov
  */
-@LanguageRegistration(mimeType = CoffeeScriptLanguage.MIME_TYPE)
-public class CoffeScriptLanguageRegistration extends DefaultLanguageConfig {
+@LanguageRegistration(mimeType = Constants.MIME_TYPE)
+public class CoffeeScriptLanguageRegistration extends DefaultLanguageConfig{
 
-    @Override
-    public String getLineCommentPrefix() {
-        return "#";
-    }
-
-    @Override
-    public Language getLexerLanguage() {
-        return CoffeeScriptLanguage.getLanguage();
+    @Override 
+    public Language getLexerLanguage() {        
+        return CoffeeScriptLanguage.getLanguage();        
     }
 
     @Override
@@ -58,19 +54,19 @@ public class CoffeScriptLanguageRegistration extends DefaultLanguageConfig {
         return "CoffeeScript";
     }
 
-    @Override
-    public StructureScanner getStructureScanner() {
-        return new CoffeeScriptStructureScanner();
-    }
-
-    @Override
-    public boolean hasStructureScanner() {
-        return true;
-    }
+//    @Override
+//    public StructureScanner getStructureScanner() {
+//        return new CoffeeScriptStructureScanner();
+//    }
+//
+//    @Override
+//    public boolean hasStructureScanner() {
+//        return true;
+//    }
 
     @Override
     public SemanticAnalyzer getSemanticAnalyzer() {
-        return new CoffeeScriptSemanticAnalyzer();
-    }
+        return CoffeeScriptSettings.get().isLegacy() ? new CoffeeScriptSemanticAnalyzer() : null;
+    }    
     
 }

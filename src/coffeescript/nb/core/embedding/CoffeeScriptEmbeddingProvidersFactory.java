@@ -11,8 +11,10 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-package coffeescript.nb;
+package coffeescript.nb.core.embedding;
 
+import coffeescript.nb.core.CoffeeScriptLanguage;
+import coffeescript.nb.core.Constants;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -41,6 +43,7 @@ public final class CoffeeScriptEmbeddingProvidersFactory extends TaskFactory {
         if (snapshot.getSource().getMimeType().equals("text/x-php5")) {
             ems.add(new PHPEmbeddingProvider());
         }
+
         return ems;
     }
 
@@ -149,12 +152,12 @@ public final class CoffeeScriptEmbeddingProvidersFactory extends TaskFactory {
                             }
                         }
                     }
-                    if ((src == null) && (type != null) && type.contains(CoffeeScriptLanguage.MIME_TYPE)) {
+                    if ((src == null) && (type != null) && type.contains(Constants.MIME_TYPE)) {
                         inCoffeeScript = true;
                     }
                 }
             } else if (inCoffeeScript && htmlId == HTMLTokenId.TEXT) {
-                embeddings.add(snapshot.create(ts.offset(), htmlToken.length(), CoffeeScriptLanguage.MIME_TYPE));
+                embeddings.add(snapshot.create(ts.offset(), htmlToken.length(), Constants.MIME_TYPE));
             } else if (htmlId == HTMLTokenId.TAG_CLOSE && "script".equals(htmlToken.toString())) {
                 inCoffeeScript = false;
             } else {

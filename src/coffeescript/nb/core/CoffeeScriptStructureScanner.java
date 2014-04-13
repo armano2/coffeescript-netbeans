@@ -11,8 +11,10 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-package coffeescript.nb;
+package coffeescript.nb.core;
 
+import coffeescript.nb.core.CoffeeScriptLanguage;
+import coffeescript.nb.core.CoffeeScriptTokenId;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -55,7 +57,7 @@ public class CoffeeScriptStructureScanner implements StructureScanner {
             Deque<IdentRegion> indents = new ArrayDeque<IdentRegion>();
             while (ts.moveNext()) {
                 Token<CoffeeScriptTokenId> token = ts.token();
-                switch (token.id()) {
+                switch (token.id().getTokenEnum()) {
 //                    case COMMENT:
 //                        TokenSequence<CoffeeScriptTokenId> commentTS = ts.subSequence(ts.offset());
 //                        int start = token.offset(th);
@@ -73,11 +75,11 @@ public class CoffeeScriptStructureScanner implements StructureScanner {
 //                        }
 //                        addIndent(document, ranges, start, end);
 //                        break;
-                    case INDENT:
+                    case INDENT_LEG:
                         Integer indent = (Integer) token.getProperty("indent");
                         indents.push(new IdentRegion(token.offset(th), indent));
                         break;
-                    case OUTDENT:
+                    case OUTDENT_LEG:
                         Integer outdent = (Integer) token.getProperty("indent");
                         int to = token.offset(th) + token.length();
                         addIndent(document, ranges, indents, outdent, to);
