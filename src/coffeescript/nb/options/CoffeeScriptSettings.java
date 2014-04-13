@@ -13,9 +13,9 @@
 // limitations under the License.
 package coffeescript.nb.options;
 
-import coffeescript.nb.CoffeeScriptCompiler;
-import coffeescript.nb.CoffeeScriptNodeJSCompiler;
-import coffeescript.nb.CoffeeScriptRhinoCompiler;
+import coffeescript.nb.core.CoffeeScriptCompiler;
+import coffeescript.nb.core.CoffeeScriptNodeJSCompiler;
+import coffeescript.nb.core.CoffeeScriptRhinoCompiler;
 import java.util.prefs.Preferences;
 import org.openide.util.NbPreferences;
 
@@ -89,6 +89,14 @@ public class CoffeeScriptSettings {
                 return CoffeeScriptRhinoCompiler.get();
         }
         return null;
+    }
+    
+    public boolean isLegacy() {
+        return getPreferences().getBoolean("legacySupport", false);
+    }
+
+    public void setLegacy(boolean selected) {
+        getPreferences().putBoolean("legacySupport", selected);
     }
 
     public enum CompilerType {
