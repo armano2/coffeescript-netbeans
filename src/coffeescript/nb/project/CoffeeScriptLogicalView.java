@@ -13,6 +13,7 @@
 // limitations under the License.
 package coffeescript.nb.project;
 
+import coffeescript.nb.core.Constants;
 import java.awt.Image;
 import java.util.ArrayList;
 import java.util.List;
@@ -96,7 +97,7 @@ public class CoffeeScriptLogicalView implements LogicalViewProvider {
 
         @Override
         public Image getIcon(int type) {
-            return ImageUtilities.loadImage("coffeescript/nb/resources/coffeescript-icon.png");
+            return ImageUtilities.loadImage(Constants.COFFEE_SCRIPT_ICON);
         }
 
         @Override
