@@ -1,0 +1,2 @@
+antlr -o ../src/coffeescript/nb/antlr/lexer/ -encoding UTF-8 -no-listener -no-visitor -package coffeescript.nb.antlr.lexer CoffeeScriptLexerGrammar.g4
+antlr -o ../src/coffeescript/nb/antlr/parser/ -listener -package coffeescript.nb.antlr.parser CoffeeScriptParserGrammar.g4
