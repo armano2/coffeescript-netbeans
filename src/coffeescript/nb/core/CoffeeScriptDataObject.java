@@ -14,17 +14,13 @@
 
 package coffeescript.nb.core;
 
-import coffeescript.nb.lexer.CoffeeScriptLexer;
-import coffeescript.nb.navigator.GrammarDescriptor;
+import coffeescript.nb.antlr.parser.definitions.CoffeeScriptFileDefinition;
 import java.io.IOException;
 import java.util.Collection;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import org.netbeans.api.project.Project;
 import org.openide.filesystems.FileObject;
 import org.openide.loaders.DataNode;
 import org.openide.loaders.DataObjectExistsException;
-import org.openide.loaders.DataShadow;
 import org.openide.loaders.MultiDataObject;
 import org.openide.loaders.MultiFileLoader;
 import org.openide.nodes.CookieSet;
@@ -70,9 +66,10 @@ public class CoffeeScriptDataObject extends MultiDataObject {
         return lookup;
     }
 
-    public void publishGrammarDescriptor(GrammarDescriptor descriptor)  {
-        Collection<? extends GrammarDescriptor> allDescriptors = lookup.lookupAll(GrammarDescriptor.class);
-        for (GrammarDescriptor desc : allDescriptors) {
+    public void publishGrammarDescriptor(CoffeeScriptFileDefinition descriptor)  {
+        if(descriptor == null) return;
+        Collection<? extends CoffeeScriptFileDefinition> allDescriptors = lookup.lookupAll(CoffeeScriptFileDefinition.class);
+        for (CoffeeScriptFileDefinition desc : allDescriptors) {
             content.remove(desc);
         }
         content.add(descriptor);

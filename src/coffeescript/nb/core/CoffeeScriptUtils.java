@@ -13,6 +13,8 @@
 // limitations under the License.
 package coffeescript.nb.core;
 
+import coffeescript.nb.antlr.parser.definitions.BlockDefinition;
+import coffeescript.nb.antlr.parser.definitions.Definition;
 import coffeescript.nb.options.CoffeeScriptSettings;
 import java.io.File;
 import java.io.OutputStream;
@@ -20,6 +22,7 @@ import java.nio.charset.Charset;
 import org.netbeans.api.project.FileOwnerQuery;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.queries.FileEncodingQuery;
+import org.netbeans.modules.csl.api.OffsetRange;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
 import org.openide.util.Exceptions;
@@ -70,5 +73,26 @@ public class CoffeeScriptUtils {
 
     public static void writeJSForCoffeeScriptFile(final String js, FileObject coffeeFile) {
         writeJS(js, coffeeFile.getName(), coffeeFile.getParent(), FileEncodingQuery.getEncoding(coffeeFile));
+    }
+    
+    public static Definition findForDefinition(BlockDefinition rootBlock, int caretOffset, String name) {
+        Definition pontentialDefinition = rootBlock.getMember(name);
+        BlockDefinition activeBlock = rootBlock;
+        boolean changedBlock = false;
+        while (activeBlock.hasChildren()) {
+            for (OffsetRange range : activeBlock.getChildren().keySet()) {
+                if(range.containsInclusive(caretOffset)) {
+                    activeBlock = activeBlock.getChildren().get(range);
+                    changedBlock = true;
+                }                
+            }
+            if(changedBlock) {
+                if (activeBlock.hasMember(name)) pontentialDefinition = activeBlock.getMember(name);
+                changedBlock = false;
+            } else {
+                break;
+            }
+        }
+        return pontentialDefinition;
     }
 }

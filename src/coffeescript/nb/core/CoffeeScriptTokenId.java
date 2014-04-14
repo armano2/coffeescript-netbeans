@@ -19,12 +19,15 @@ public class CoffeeScriptTokenId implements TokenId {
     private TokenEnumLexer token;
     private final Integer id;
     private String tokenString;
+    private boolean legacy;
 
     public CoffeeScriptTokenId(
             TokenEnumLexer token,
-            Integer id) {
+            Integer id,
+            boolean legacy) {
         this.token = token;
         this.id = id;
+        this.legacy = legacy;
     }
 
     @Override
@@ -62,11 +65,22 @@ public class CoffeeScriptTokenId implements TokenId {
         this.tokenString = tokenString;
     }
 
+    public boolean isLegacy() {
+        return legacy;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if(obj instanceof TokenEnumLexer)
             return token.equals(obj);
         return super.equals(obj);
     }    
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 79 * hash + (this.id != null ? this.id.hashCode() : 0);
+        return hash;
+    }
     
 }

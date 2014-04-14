@@ -13,6 +13,8 @@
 // limitations under the License.
 package coffeescript.nb.core;
 
+import coffeescript.nb.parser.ErrorDescription;
+
 /**
  *
  * @author Denis Stepanov
@@ -40,6 +42,10 @@ public interface CoffeeScriptCompiler {
         
         public Error getError() {
             return error;
+        }
+        
+        public boolean hasError() {
+            return error != null;
         }
     }
     
@@ -70,9 +76,16 @@ public interface CoffeeScriptCompiler {
         public String getErrorName() {
             return errorName;
         }
-        
+
         public String getMessage() {
             return message;
         }
+        
+        public ErrorDescription getErrorDesription() {
+            int errorLine = (line == -1) ? 0 : line;
+            String errorMessage = (line == -1) ? message : errorName;
+            return new ErrorDescription(errorLine, column, errorMessage);
+        }
+
     }
 }

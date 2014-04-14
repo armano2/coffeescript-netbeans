@@ -78,7 +78,7 @@ public class CoffeeScriptLanguage extends LanguageHierarchy<CoffeeScriptTokenId>
         int i = tokens.size()+1;
         for (TokenEnumLexer en : TokenEnumLexer.getLegacyTokens()) {
             if(!enumToToken.containsKey(en)) {
-                CoffeeScriptTokenId id = new CoffeeScriptTokenId(en, i);
+                CoffeeScriptTokenId id = new CoffeeScriptTokenId(en, i, true);
                 i++;
                 tokens.add(id);
                 enumToToken.put(en, id);
@@ -92,7 +92,7 @@ public class CoffeeScriptLanguage extends LanguageHierarchy<CoffeeScriptTokenId>
 
     @Override
     protected Lexer<CoffeeScriptTokenId> createLexer(LexerRestartInfo<CoffeeScriptTokenId> lri) {
-        return (CoffeeScriptSettings.get().isLegacy()) ? new CoffeeScriptLexer(lri) : new CoffeeScriptLexer(lri);
+        return (CoffeeScriptSettings.get().isLegacy()) ? new CoffeeScriptLexerLegacy(lri) : new CoffeeScriptLexer(lri);
     }
 
     @Override

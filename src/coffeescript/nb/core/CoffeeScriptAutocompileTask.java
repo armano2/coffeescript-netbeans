@@ -15,6 +15,7 @@ package coffeescript.nb.core;
 
 import coffeescript.nb.parser.ParseActionLegacy;
 import coffeescript.nb.parser.CoffeeScriptParser;
+import coffeescript.nb.parser.ParsingResult;
 import java.util.Collection;
 import java.util.Collections;
 import org.netbeans.modules.parsing.api.Snapshot;
@@ -28,9 +29,9 @@ import org.openide.filesystems.FileObject;
 /**
  * @author Denis Stepanov
  */
-public class CoffeeScriptAutocompileTask extends ParserResultTask<ParseActionLegacy.ParsingResult> {
+public class CoffeeScriptAutocompileTask extends ParserResultTask<ParsingResult> {
 
-    public void run(final ParseActionLegacy.ParsingResult result, SchedulerEvent event) {
+    public void run(final ParsingResult result, SchedulerEvent event) {
         if ((result != null) && !CoffeeScriptAutocompileContext.get().isEnabled(result.getSnapshot().getSource().getFileObject())) {
             return;
         }
