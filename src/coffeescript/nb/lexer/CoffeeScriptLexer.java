@@ -9,11 +9,13 @@ import coffeescript.nb.core.CoffeeScriptTokenId;
 import coffeescript.nb.core.CoffeeScriptLanguage;
 import coffeescript.nb.antlr.lexer.AntlrCharStream;
 import coffeescript.nb.antlr.lexer.CoffeeScriptLexerGrammar;
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.Queue;
 import javax.swing.SwingUtilities;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.text.StyledDocument;
 import org.netbeans.api.lexer.Token;
 import org.netbeans.api.lexer.TokenHierarchy;
 import org.netbeans.modules.editor.NbEditorDocument;
@@ -22,6 +24,7 @@ import org.netbeans.spi.lexer.LexerRestartInfo;
 import org.netbeans.spi.lexer.MutableTextInput;
 import org.openide.cookies.EditorCookie;
 import org.openide.loaders.DataObject;
+import org.openide.util.Exceptions;
 import org.openide.util.Lookup;
 import org.openide.util.RequestProcessor;
 import org.openide.util.Utilities;
@@ -110,20 +113,28 @@ public class CoffeeScriptLexer implements Lexer<CoffeeScriptTokenId>{
     @Override
     public void release() {
         Lookup l = Utilities.actionsGlobalContext();        
-        EditorCookie.Observable ec = l.lookup(DataObject.class).getCookie(EditorCookie.Observable.class);
+        DataObject dataObject = l.lookup(DataObject.class);
+        if(dataObject == null) return;
+        EditorCookie.Observable ec = dataObject.getLookup().lookup(EditorCookie.Observable.class);
         if(ec == null) return;
         final NbEditorDocument doc = (NbEditorDocument) ec.getDocument();
-        doc.removeUpdateDocumentListener(listener);
+//        doc.removeUpdateDocumentListener(listener);
     }
    
-    private TokenHierarchy<CoffeeScriptTokenId> setupTokenHierarchy() {
+    private void setupTokenHierarchy() {
         Lookup l = Utilities.actionsGlobalContext();        
-        EditorCookie.Observable ec = l.lookup(DataObject.class).getCookie(EditorCookie.Observable.class);
-        if(ec == null) return null;
-        final NbEditorDocument doc = (NbEditorDocument) ec.getDocument();
+        DataObject dataObject = l.lookup(DataObject.class);
+        if(dataObject == null) return;
+        EditorCookie.Observable ec = dataObject.getLookup().lookup(EditorCookie.Observable.class);
+        if(ec == null) return;
+        StyledDocument doc = (StyledDocument) ec.getDocument();
         listener = new ThisDocumentListener();
-//        doc.addUpdateDocumentListener(listener);
-        return null;        
+        try {
+            doc = ec.openDocument();
+        } catch (IOException ex) {
+            Exceptions.printStackTrace(ex);
+        }
+//        doc.addUpdateDocumentListener(listener);      
     }
     private class ThisDocumentListener implements DocumentListener {
 
