@@ -8,7 +8,7 @@ import coffeescript.lexer.CoffeeScriptNativeLexer;
 import coffeescript.lexer.CoffeeScriptNativeLexerException;
 import coffeescript.nb.antlr.parser.CoffeeScriptParserGrammar;
 import coffeescript.nb.antlr.parser.CoffeeScriptTokenStream;
-import coffeescript.nb.antlr.parser.CompletionListener;
+import coffeescript.nb.antlr.parser.ParseTreeListener;
 import coffeescript.nb.antlr.parser.definitions.BlockDefinition;
 import coffeescript.nb.antlr.parser.definitions.ClassDefinition;
 import coffeescript.nb.core.CoffeeScriptLanguage;
@@ -52,7 +52,7 @@ public class ParseAction implements Callable<ParserResult> {
             BlockDefinition rootBlock = new BlockDefinition();
             ParseTreeWalker walker = new ParseTreeWalker();
             final StyledDocument doc = (StyledDocument) snapshot.getSource().getDocument(false);
-            walker.walk(new CompletionListener(classes, rootBlock, doc), tree);
+            walker.walk(new ParseTreeListener(classes, rootBlock, doc), tree);
             grammarDesc.setRootBlock(rootBlock);
             grammarDesc.setClasses(classes);
             SwingUtilities.invokeLater(new AutocompilationTask(snapshot));

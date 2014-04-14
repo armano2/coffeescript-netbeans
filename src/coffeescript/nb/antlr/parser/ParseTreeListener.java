@@ -10,11 +10,8 @@ import coffeescript.nb.antlr.parser.definitions.ClassDefinition;
 import coffeescript.nb.antlr.parser.definitions.MethodDefinition;
 import coffeescript.nb.antlr.parser.definitions.VariableDefinition;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Stack;
-import javax.swing.text.Document;
 import javax.swing.text.StyledDocument;
 import org.antlr.v4.runtime.Token;
 import org.netbeans.modules.csl.api.OffsetRange;
@@ -24,7 +21,7 @@ import org.openide.text.NbDocument;
  *
  * @author milos
  */
-public class CompletionListener extends CoffeeScriptParserGrammarBaseListener {
+public class ParseTreeListener extends CoffeeScriptParserGrammarBaseListener {
     
     private Stack<BlockType> stack;
     private StyledDocument doc;
@@ -34,7 +31,7 @@ public class CompletionListener extends CoffeeScriptParserGrammarBaseListener {
     private final List<ClassDefinition> definitions;
     private List<VariableDefinition> params;
 
-    public CompletionListener(List<ClassDefinition> definitions, BlockDefinition rootBlock, StyledDocument doc) {
+    public ParseTreeListener(List<ClassDefinition> definitions, BlockDefinition rootBlock, StyledDocument doc) {
         stack = new Stack<BlockType>();
         this.doc = doc;
         classStack = new Stack<ClassDefinition>();
@@ -214,6 +211,7 @@ public class CompletionListener extends CoffeeScriptParserGrammarBaseListener {
     }
     
     private int getAbsoluteOffset(Token token) {
+        if(token== null) return 0;
         return NbDocument.findLineOffset(doc, token.getLine()-1) + token.getCharPositionInLine()-1;
     }
     
