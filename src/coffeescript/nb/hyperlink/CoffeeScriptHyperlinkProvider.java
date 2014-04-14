@@ -39,14 +39,13 @@
 package coffeescript.nb.hyperlink;
 
 import coffeescript.nb.core.CoffeeScriptDataObject;
-import coffeescript.nb.antlr.parser.definitions.VariableDefinition;
 import coffeescript.nb.antlr.lexer.CoffeeScriptLexerGrammar;
 import coffeescript.nb.antlr.parser.definitions.Definition;
+import coffeescript.nb.core.CoffeeScriptUtils;
 import coffeescript.nb.core.Constants;
 import coffeescript.nb.lexer.LexUtilities;
-import coffeescript.nb.navigator.GrammarDescriptor;
+import coffeescript.nb.antlr.parser.definitions.CoffeeScriptFileDefinition;
 import coffeescript.nb.options.CoffeeScriptSettings;
-import coffeescript.nb.parser.BlockUtils;
 import javax.swing.text.Document;
 import javax.swing.text.JTextComponent;
 import org.netbeans.api.editor.mimelookup.MimeRegistration;
@@ -124,8 +123,8 @@ public class CoffeeScriptHyperlinkProvider implements HyperlinkProvider {
         // place caret at start of rule
         CoffeeScriptDataObject abnfDataObject = (CoffeeScriptDataObject) NbEditorUtilities.getDataObject(doc);
         assert (abnfDataObject != null);
-        GrammarDescriptor grammarDescriptor = abnfDataObject.getLookup().lookup(GrammarDescriptor.class);
-        Definition ruleDescriptor = BlockUtils.findForDefinition(grammarDescriptor.getRootBlock(), caretOffset, tokenInfo.getText());
+        CoffeeScriptFileDefinition grammarDescriptor = abnfDataObject.getLookup().lookup(CoffeeScriptFileDefinition.class);
+        Definition ruleDescriptor = CoffeeScriptUtils.findForDefinition(grammarDescriptor.getRootBlock(), caretOffset, tokenInfo.getText());
         if (ruleDescriptor != null) {
             int offset = NbDocument.findLineOffset(editorDocument, ruleDescriptor.getLine()) + ruleDescriptor.getCharPositionInLine();
             target.setCaretPosition(offset);
