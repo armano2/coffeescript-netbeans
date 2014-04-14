@@ -69,11 +69,11 @@ public class ParseTask implements Runnable {
 
                 @Override
                 public void run(ResultIterator resultIterator) throws Exception {
-                    Result result = resultIterator.getParserResult();
-                    if (!(result instanceof ParseAction.ParsingResult)) return;
-                    ParseAction.ParsingResult parseResult = (ParseAction.ParsingResult) resultIterator.getParserResult();
-                    if(parseResult != null)
+                    ParsingResult parseResult = (ParsingResult) resultIterator.getParserResult();
+                    if(parseResult != null) {
                         dataObject.publishGrammarDescriptor(parseResult.getGd());
+                    }
+                        
                 }
             });
         } catch (ParseException ex) {

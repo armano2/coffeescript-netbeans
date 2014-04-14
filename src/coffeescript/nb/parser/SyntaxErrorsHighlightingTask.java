@@ -11,13 +11,13 @@ import org.netbeans.spi.editor.hints.ErrorDescriptionFactory;
 import org.netbeans.spi.editor.hints.HintsController;
 import org.netbeans.spi.editor.hints.Severity;
 
-public class SyntaxErrorsHighlightingTask extends ParserResultTask<ParseAction.ParsingResult> {
+public class SyntaxErrorsHighlightingTask extends ParserResultTask<ParsingResult> {
 
     public SyntaxErrorsHighlightingTask() {
     }
 
     @Override
-    public void run(ParseAction.ParsingResult result, SchedulerEvent event) {
+    public void run(ParsingResult result, SchedulerEvent event) {
         try {
             Document document = result.getSnapshot ().getSource ().getDocument (false);
             List<ErrorDescription> errors = new ArrayList<ErrorDescription> ();
