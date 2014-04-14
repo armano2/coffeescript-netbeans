@@ -13,7 +13,10 @@
 // limitations under the License.
 package coffeescript.nb.project;
 
-import coffeescript.nb.CoffeeScriptSourceEncodingQuery;
+import coffeescript.nb.indexing.classpath.CoffeeScriptClassPathProvider;
+import coffeescript.nb.core.CoffeeScriptSourceEncodingQuery;
+import coffeescript.nb.core.Constants;
+import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
@@ -22,12 +25,15 @@ import java.util.Collections;
 import java.util.List;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import org.netbeans.api.java.classpath.ClassPath;
+import org.netbeans.api.java.classpath.GlobalPathRegistry;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.project.ProjectInformation;
 import org.netbeans.spi.project.ActionProvider;
 import org.netbeans.spi.project.CopyOperationImplementation;
 import org.netbeans.spi.project.DeleteOperationImplementation;
 import org.netbeans.spi.project.ProjectState;
+import org.netbeans.spi.project.ui.ProjectOpenedHook;
 import org.netbeans.spi.project.ui.support.DefaultProjectOperations;
 import org.openide.filesystems.FileObject;
 import org.openide.util.Exceptions;
@@ -44,7 +50,8 @@ public class CoffeeScriptProject implements Project {
     private FileObject projectDirectory;
     private ProjectState state;
     private Lookup lookup;
-
+    private ClassPath sourcePath;
+   
     public CoffeeScriptProject(FileObject projectDirectory, ProjectState state) {
         this.projectDirectory = projectDirectory;
         this.state = state;
@@ -78,12 +85,25 @@ public class CoffeeScriptProject implements Project {
                         new CoffeeScriptCopyOperation(this),
                         new CoffeeScriptProjectInfo(),
                         new CoffeeScriptLogicalView(this),
-                        new CoffeeScriptSourceEncodingQuery()
+                        new CoffeeScriptSourceEncodingQuery(),
+                        new OpenHookImpl(this),
 //                        new CoffeeScriptProjectCustomizer(this)
                     });
         }
         return lookup;
     }
+    
+    public FileObject getSiteRootFolder() {        
+        return projectDirectory.getFileObject(Constants.SOURCES_DIR);
+    }
+    
+    public ClassPath getSourceClassPath() {
+        if (sourcePath == null) {
+            sourcePath = CoffeeScriptClassPathProvider.createProjectClasspath(this);
+        }
+        return sourcePath;
+    }
+    
     
     private final class CoffeeScriptActionProvider implements ActionProvider {
 
@@ -166,8 +186,7 @@ public class CoffeeScriptProject implements Project {
 
         @Override
         public Icon getIcon() {
-            return new ImageIcon(ImageUtilities.loadImage(
-                    "coffeescript/nb/resources/coffeescript-icon.png"));
+            return new ImageIcon(ImageUtilities.loadImage(Constants.COFFEE_SCRIPT_ICON));
         }
 
         @Override
@@ -194,5 +213,36 @@ public class CoffeeScriptProject implements Project {
         public Project getProject() {
             return CoffeeScriptProject.this;
         }
+    }
+    
+    private static class OpenHookImpl extends ProjectOpenedHook implements PropertyChangeListener {
+
+        private final CoffeeScriptProject project;
+
+
+        public OpenHookImpl(CoffeeScriptProject project) {
+            this.project = project;
+        }
+
+        @Override
+        protected void projectOpened() {
+            GlobalPathRegistry.getDefault().register(CoffeeScriptClassPathProvider.SOURCE_CS, new ClassPath[]{project.getSourceClassPath()});
+        }
+
+        @Override
+        protected void projectClosed() {
+            GlobalPathRegistry.getDefault().unregister(CoffeeScriptClassPathProvider.SOURCE_CS, new ClassPath[]{project.getSourceClassPath()});
+        }
+
+        private synchronized void addSiteRootListener() {
+        }
+
+        private synchronized void removeSiteRootListener() {
+        }
+
+        @Override
+        public void propertyChange(PropertyChangeEvent evt) {
+        }
+
     }
 }

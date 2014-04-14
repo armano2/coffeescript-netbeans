@@ -37,7 +37,7 @@ public class CoffeeScriptProjectFactory implements ProjectFactory2 {
     public boolean isProject(FileObject projectDirectory) {
         return projectDirectory.getFileObject(PROJECT_CONFIG_FILE) != null;
     }
-
+    
     public Project loadProject(FileObject projectDirectory, ProjectState state) throws IOException {
         return isProject(projectDirectory) ? new CoffeeScriptProject(projectDirectory, state) : null;
     }
