@@ -91,7 +91,8 @@
                     </file>
                 </folder>
                 <file name="coffeescript-nb-parser-SyntaxErrorsHighlightingTaskFactory.instance"/> 
-                <file name="coffeescript-nb-core-CoffeeScriptAutocompileTask$Factory.instance"/>
+                <file name="coffeescript-nb-parser-AddFileDefinitionToContextTaskFactory.instance"/>
+                <!--<file name="coffeescript-nb-core-CoffeeScriptAutocompileTask$Factory.instance"/>-->
                 <folder name="FontsColors">
                     <folder name="NetBeans">
                         <folder name="Defaults">
@@ -101,9 +102,9 @@
                         </folder>
                     </folder>
                 </folder>
-                <!-- <file name="coffeescript-nb-RNGIndexer$Factory.instance">
+                <file name="coffeescript-nb-indexing-CoffeeScriptIndexer$Factory.instance">
                     <attr name="instanceOf" stringvalue="org.netbeans.modules.parsing.spi.indexing.EmbeddingIndexerFactory"/>
-                </file> -->
+                </file>
                 <folder name="Preferences">
                     <folder name="Defaults">
                         <file name="coffeescript-nb-resources-preferences.xml" url="preferences.xml"/>
