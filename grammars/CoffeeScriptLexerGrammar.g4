@@ -217,7 +217,7 @@ NUMBER
 
 STRING
     : [']ESC_AMP*?[']
-    | ["]ESC_QUOTE*?["]
+    | ["](INTERPOLATION | ESC_QUOTE)*?["]
     |  '\'\'\''.*?'\'\'\''
     | '"""'.*?'"""'
 ;
@@ -242,6 +242,10 @@ COMMENT
 
 IDENTIFIER
     : [$A-Za-z_\u007f-\uffff][$A-Za-z_0-9\u007f-\uffff]* 
+;
+
+CLASS_FIELD
+    : '@'[$A-Za-z_\u007f-\uffff][$A-Za-z_0-9\u007f-\uffff]* 
 ;
 
 //whitespaces
@@ -309,6 +313,10 @@ fragment ESC_QUOTE
     : '\\"'
     | '\\\\'
     |~["]                      
+;
+
+fragment INTERPOLATION
+    : '#{' .*? '}'               
 ;
                          
 fragment DIGIT
