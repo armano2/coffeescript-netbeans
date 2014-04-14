@@ -4,8 +4,10 @@
  */
 package coffeescript.nb.antlr.parser.definitions;
 
+import coffeescript.nb.completion.items.MethodCompletionItem;
 import coffeescript.nb.navigator.nodes.MethodNode;
 import java.util.List;
+import org.netbeans.spi.editor.completion.CompletionItem;
 import org.openide.nodes.Node;
 import org.openide.util.Lookup;
 
@@ -44,5 +46,9 @@ public class MethodDefinition extends Definition {
     public Node getNode(Lookup lookup) {
         return new MethodNode(this, lookup);
     }
-    
+
+    @Override
+    public CompletionItem getCompletionItem(String fileName, int startOffset, int caretOffset) {
+        return new MethodCompletionItem(text, fileName, startOffset, caretOffset);
+    }    
 }

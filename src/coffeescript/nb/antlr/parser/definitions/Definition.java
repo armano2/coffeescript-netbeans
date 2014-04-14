@@ -4,6 +4,7 @@
  */
 package coffeescript.nb.antlr.parser.definitions;
 
+import org.netbeans.spi.editor.completion.CompletionItem;
 import org.openide.nodes.Node;
 import org.openide.util.Lookup;
 
@@ -22,7 +23,7 @@ public abstract class Definition {
     }
 
     public String getText() {
-        return text;
+        return (text != null) ? text : "";
     }
 
     public void setText(String text) {
@@ -45,5 +46,6 @@ public abstract class Definition {
         this.charPositionInLine = charPositionInLine;
     } 
     public abstract Node getNode(Lookup lookup);
+    public abstract CompletionItem getCompletionItem(String fileName, int startOffset, int caretOffset);
     
 }

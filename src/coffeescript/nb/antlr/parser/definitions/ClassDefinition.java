@@ -4,11 +4,11 @@
  */
 package coffeescript.nb.antlr.parser.definitions;
 
+import coffeescript.nb.completion.items.ClassCompletionItem;
 import coffeescript.nb.navigator.nodes.ClassNode;
 import coffeescript.nb.navigator.nodes.DefinitionChildren;
 import java.util.Collection;
-import java.util.Map;
-import org.openide.nodes.AbstractNode;
+import org.netbeans.spi.editor.completion.CompletionItem;
 import org.openide.nodes.Node;
 import org.openide.util.Lookup;
 
@@ -52,6 +52,10 @@ public class ClassDefinition extends Definition {
     public Node getNode(Lookup lookup) {
         return new ClassNode(this, new DefinitionChildren(vars, lookup), lookup);
     }
-    
+
+    @Override
+    public CompletionItem getCompletionItem(String fileName, int startOffset, int caretOffset) {
+        return new ClassCompletionItem(text, fileName, startOffset, caretOffset);
+    }   
     
 }
