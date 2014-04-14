@@ -38,6 +38,7 @@
  */
 package coffeescript.nb.navigator;
 
+import coffeescript.nb.antlr.parser.definitions.CoffeeScriptFileDefinition;
 import coffeescript.nb.navigator.nodes.DefinitionChildren;
 import coffeescript.nb.core.CoffeeScriptDataObject;
 import coffeescript.nb.antlr.parser.definitions.Definition;
@@ -64,6 +65,7 @@ import org.netbeans.spi.navigator.NavigatorPanel;
 import org.openide.cookies.EditorCookie;
 import org.openide.explorer.ExplorerManager;
 import org.openide.explorer.view.BeanTreeView;
+import org.openide.filesystems.FileObject;
 import org.openide.nodes.AbstractNode;
 import org.openide.nodes.Children;
 import org.openide.nodes.Node;
@@ -90,7 +92,7 @@ public class CoffeeScriptNavigator implements NavigatorPanel {
     /** holds UI of this panel */
     private NavPanel panel;
     /** template for finding data in given context */
-    private Result<GrammarDescriptor> grammarLookupResult;
+    private Result<CoffeeScriptFileDefinition> grammarLookupResult;
     private Result<CoffeeScriptDataObject> coffeeScriptDataObjectLookupResult;
     private Lookup contextLookup;
     /** listener to context changes */
@@ -111,7 +113,6 @@ public class CoffeeScriptNavigator implements NavigatorPanel {
 
     public CoffeeScriptNavigator() {
         this.ic = new InstanceContent();
-//        this.navigatorLookup = new AbstractLookup(ic);
         // Publish selected node in NavigatorPanel lookup so that the title of the window updates with the display name of the node
         manager.addPropertyChangeListener(new PropertyChangeListener() {
 
@@ -168,17 +169,20 @@ public class CoffeeScriptNavigator implements NavigatorPanel {
         this.coffeeScriptDataObjectLookupResult.addLookupListener(getCoffeeScriptDataObjectLookupListener());
 
         // notified when new grammar descriptor available
-        this.grammarLookupResult = context.lookupResult(GrammarDescriptor.class);
+        this.grammarLookupResult = context.lookupResult(CoffeeScriptFileDefinition.class);
         this.grammarLookupResult.addLookupListener(getGrammarDescriptorLookupListener());
         this.grammarLookupResult.allInstances(); // Required for triggering events!!!
 
         // Force initialization since it waCoffeeScriptSourceEncodingQuerys not triggered yet
-        newDataObject(this.coffeeScriptDataObjectLookupResult.allInstances());
+//        newDataObject(this.coffeeScriptDataObjectLookupResult.allInstances());
     }
 
     private void registerEditorListeners(Lookup context) {
-        assert (EventQueue.isDispatchThread() == true);
+        
+        if(!EventQueue.isDispatchThread()) return;
         EditorCookie ec = context.lookup(EditorCookie.class);
+        FileObject fo = context.lookup(FileObject.class);
+        if(fo == null || !fo.isValid()) return;
         if (ec != null) {
             StyledDocument styledDocument = ec.getDocument();
             // force open document. Might never need this section of code
@@ -229,7 +233,6 @@ public class CoffeeScriptNavigator implements NavigatorPanel {
      */
     @Override
     public void panelDeactivated() {
-//        System.err.println("=== panelDeactivated");
         this.grammarLookupResult.removeLookupListener(getGrammarDescriptorLookupListener());
         this.grammarLookupResult = null;
         this.grammarDescriptorLookupListener = null;
@@ -258,9 +261,10 @@ public class CoffeeScriptNavigator implements NavigatorPanel {
         return an;
     }
 
-    private void newGrammar(Collection<? extends GrammarDescriptor> newData) {
+    private void newGrammar(Collection<? extends CoffeeScriptFileDefinition> newData) {
         if (newData.size() > 0) {
-            GrammarDescriptor grammarDescriptor = newData.toArray(new GrammarDescriptor[0])[0];
+            CoffeeScriptFileDefinition grammarDescriptor = newData.toArray(new CoffeeScriptFileDefinition[0])[0];
+            
             Collection<Definition> ruleNameDescriptor = grammarDescriptor.getVariables();
             if (ruleNameDescriptor != null) {                
                 CoffeeScriptDataObject dataObject = contextLookup.lookup(CoffeeScriptDataObject.class);
@@ -321,7 +325,7 @@ public class CoffeeScriptNavigator implements NavigatorPanel {
             this.editorPropertyChangeLister = new EditorPropertyChangeLister(dataObjectLookup);
             obs.addPropertyChangeListener(WeakListeners.create(PropertyChangeListener.class, this.editorPropertyChangeLister, obs));
 
-            Collection<? extends GrammarDescriptor> grammarCollection = dataObjectLookup.lookupAll(GrammarDescriptor.class);
+            Collection<? extends CoffeeScriptFileDefinition> grammarCollection = dataObjectLookup.lookupAll(CoffeeScriptFileDefinition.class);
             if (grammarCollection.size() > 0) {
                 parsingValid = true;
                 newGrammar(grammarCollection);
@@ -358,7 +362,7 @@ public class CoffeeScriptNavigator implements NavigatorPanel {
     }
 
     private void updateSelectedRule() {
-        assert (EventQueue.isDispatchThread() == true);
+        if(!EventQueue.isDispatchThread()) return;
         int position = this.caretPosition;
         if (position < 0) {
             return;
@@ -394,7 +398,7 @@ public class CoffeeScriptNavigator implements NavigatorPanel {
 
         @Override
         public void resultChanged(LookupEvent ev) {
-            Collection<? extends GrammarDescriptor> data = grammarLookupResult.allInstances();
+            Collection<? extends CoffeeScriptFileDefinition> data = grammarLookupResult.allInstances();
             newGrammar(data);
         }
     }

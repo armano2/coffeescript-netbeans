@@ -6,7 +6,7 @@ package coffeescript.nb.navigator.nodes;
 
 import coffeescript.nb.antlr.parser.definitions.Definition;
 import coffeescript.nb.antlr.parser.definitions.VariableDefinition;
-import coffeescript.nb.navigator.GrammarDescriptor;
+import coffeescript.nb.antlr.parser.definitions.CoffeeScriptFileDefinition;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.util.Collection;
@@ -35,7 +35,7 @@ public class GoToRuleAction extends AbstractAction {
                 return;
             }
             try {
-                GrammarDescriptor grammarDescriptor = lookup.lookup(GrammarDescriptor.class);
+                CoffeeScriptFileDefinition grammarDescriptor = lookup.lookup(CoffeeScriptFileDefinition.class);
                 Collection<Definition> ruleNameDescriptor = grammarDescriptor.getVariables();
                 if ((ruleNameDescriptor != null) && (ruleNameDescriptor.size() > 0)) {
                     Line l = cookie.getLineSet().getCurrent(definition.getLine());
