@@ -144,6 +144,7 @@ public enum TokenEnumLexer {
     REGEXP(null,Category.REGEXP_CAT),
     COMMENT(null,Category.COMMENT_CAT),
     IDENTIFIER(null,Category.IDENTIFIER_CAT),
+    CLASS_FIELD(null,Category.FIELD_CAT),
     TERMINATOR(null,Category.WHITESPACE_CAT),
     NEW_LINE(null,Category.WHITESPACE_CAT),
     SKIP(null,Category.WHITESPACE_CAT),

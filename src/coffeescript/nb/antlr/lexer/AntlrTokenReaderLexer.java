@@ -60,7 +60,7 @@ public class AntlrTokenReaderLexer {
                 TokenEnumLexer token = TokenEnumLexer.tokenValue(name);
                 if (token != null) {
                     //if the value exists, put it in the correct category
-                    id = new CoffeeScriptTokenId(token, tokenOrdinal);
+                    id = new CoffeeScriptTokenId(token, tokenOrdinal, false);
                 } else {
                     continue;
                 }
