@@ -5,7 +5,6 @@
 package coffeescript.nb.parser;
 
 import coffeescript.nb.core.CoffeeScriptDataObject;
-import coffeescript.nb.core.context.ICoffeeScriptMainContext;
 import org.netbeans.modules.parsing.spi.ParserResultTask;
 import org.netbeans.modules.parsing.spi.Scheduler;
 import org.netbeans.modules.parsing.spi.SchedulerEvent;
@@ -23,14 +22,12 @@ public class AddFileDefinitionToContextTask extends ParserResultTask<ParsingResu
 
     @Override
     public void run(ParsingResult result, SchedulerEvent event) {
-        ICoffeeScriptMainContext context = Lookup.getDefault().lookup(ICoffeeScriptMainContext.class);
         FileObject fo = result.getSnapshot().getSource().getFileObject();
         Lookup lookup = fo.getLookup();
         CoffeeScriptDataObject dataObject = lookup.lookup(CoffeeScriptDataObject.class);
         if(dataObject != null) {
             dataObject.publishGrammarDescriptor(result.getGd());
         }
-        context.addDefinition(fo, result.getGd());
     }
 
     @Override
