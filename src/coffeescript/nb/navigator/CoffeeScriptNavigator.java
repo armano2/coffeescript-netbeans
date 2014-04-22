@@ -42,7 +42,6 @@ import coffeescript.nb.antlr.parser.definitions.CoffeeScriptFileDefinition;
 import coffeescript.nb.navigator.nodes.DefinitionChildren;
 import coffeescript.nb.core.CoffeeScriptDataObject;
 import coffeescript.nb.antlr.parser.definitions.Definition;
-import coffeescript.nb.antlr.parser.definitions.VariableDefinition;
 import coffeescript.nb.navigator.nodes.RootNode;
 import coffeescript.nb.parser.ParseTask;
 import java.io.IOException;
@@ -53,6 +52,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyVetoException;
 import java.util.Collection;
+import java.util.List;
 import javax.swing.JComponent;
 import javax.swing.JEditorPane;
 import javax.swing.JPanel;
@@ -69,7 +69,6 @@ import org.openide.filesystems.FileObject;
 import org.openide.nodes.AbstractNode;
 import org.openide.nodes.Children;
 import org.openide.nodes.Node;
-import org.openide.text.NbDocument;
 import org.openide.util.Exceptions;
 import org.openide.util.Lookup;
 import org.openide.util.Lookup.Result;
@@ -263,13 +262,11 @@ public class CoffeeScriptNavigator implements NavigatorPanel {
 
     private void newGrammar(Collection<? extends CoffeeScriptFileDefinition> newData) {
         if (newData.size() > 0) {
-            CoffeeScriptFileDefinition grammarDescriptor = newData.toArray(new CoffeeScriptFileDefinition[0])[0];
-            
-            Collection<Definition> ruleNameDescriptor = grammarDescriptor.getVariables();
+            CoffeeScriptFileDefinition grammarDescriptor = newData.toArray(new CoffeeScriptFileDefinition[0])[0];            
+            List<Definition> ruleNameDescriptor = grammarDescriptor.getRootDefinitions();
             if (ruleNameDescriptor != null) {                
-                CoffeeScriptDataObject dataObject = contextLookup.lookup(CoffeeScriptDataObject.class);
                 rootNode = new RootNode (
-                        dataObject.getPrimaryFile().getName(), 
+                        grammarDescriptor.getFileName(), 
                         new DefinitionChildren(ruleNameDescriptor, contextLookup), 
                         contextLookup
                         );
@@ -376,8 +373,8 @@ public class CoffeeScriptNavigator implements NavigatorPanel {
                 for (Node node : children.snapshot()) {
                     Definition ruleDescriptor = node.getLookup().lookup(Definition.class);
                     if (ruleDescriptor == null) return;
-                    int start = NbDocument.findLineOffset(doc, ruleDescriptor.getLine()) + ruleDescriptor.getCharPositionInLine();
-                    int end = NbDocument.findLineOffset(doc, ruleDescriptor.getLine()) + ruleDescriptor.getCharPositionInLine();
+                    int start = ruleDescriptor.getStartOffset();
+                    int end = ruleDescriptor.getEndOffset();
                     if ((position >= start) && (position <= end)) {
                         try {
                             manager.setSelectedNodes(new Node[]{node});

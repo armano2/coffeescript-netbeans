@@ -40,6 +40,9 @@ package coffeescript.nb.navigator.nodes;
 
 import coffeescript.nb.antlr.parser.definitions.Definition;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 import org.openide.nodes.Children;
 import org.openide.nodes.Node;
 import org.openide.util.Lookup;
@@ -53,7 +56,8 @@ public class DefinitionChildren extends Children.Keys<Definition> {
     Collection<Definition> rules;
     Lookup lookup;
 
-    public DefinitionChildren(Collection<Definition> rules, Lookup lookup) {
+    public DefinitionChildren(List<Definition> rules, Lookup lookup) {
+        Collections.sort(rules, new StartOffsetComparator());
         this.rules = rules;
         this.lookup = lookup;
     }
@@ -66,5 +70,13 @@ public class DefinitionChildren extends Children.Keys<Definition> {
     @Override
     protected Node[] createNodes(Definition key) {
         return new Node[]{key.getNode(lookup)};
+    }
+    
+    private class StartOffsetComparator implements Comparator<Definition> {
+
+        public int compare(Definition o1, Definition o2) {
+            return Integer.compare(o1.getStartOffset(), o2.getStartOffset());
+        }        
+        
     }
 }
