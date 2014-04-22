@@ -24,7 +24,7 @@ public class Constants {
     
     public static final String COFFEE_SCRIPT_JS = "coffeescript/nb/resources/coffee-script.js";
     
-    public static final String TOKENS_ANTLR_LEXER = "coffeescript/nb/antlr/lexer/CoffeeScriptLexerGrammar.tokens";
+    public static final String KEYWORDS = "coffeescript/nb/resources/keywords";
     
     public static final String TOKENS_ANTLR_PARSER = "coffeescript/nb/antlr/parser/CoffeeScriptParserGrammar.tokens";
     

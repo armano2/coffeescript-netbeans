@@ -14,10 +14,8 @@
 package coffeescript.nb.core;
 
 import coffeescript.nb.parser.CoffeeScriptParser;
-import coffeescript.nb.options.CoffeeScriptSettings;
 import org.netbeans.api.lexer.Language;
 import org.netbeans.modules.csl.api.Formatter;
-import org.netbeans.modules.csl.api.SemanticAnalyzer;
 import org.netbeans.modules.csl.spi.DefaultLanguageConfig;
 import org.netbeans.modules.csl.spi.LanguageRegistration;
 import org.netbeans.modules.parsing.spi.Parser;
@@ -27,7 +25,7 @@ import org.netbeans.modules.parsing.spi.Parser;
  * @author Denis Stepanov
  */
 @LanguageRegistration(mimeType = Constants.MIME_TYPE)
-public class CoffeeScriptLanguageRegistration extends DefaultLanguageConfig{
+public class CoffeeScriptLanguageRegistration extends DefaultLanguageConfig {
 
     @Override 
     public Language getLexerLanguage() {        
@@ -53,20 +51,5 @@ public class CoffeeScriptLanguageRegistration extends DefaultLanguageConfig{
     public String getDisplayName() {
         return "CoffeeScript";
     }
-
-//    @Override
-//    public StructureScanner getStructureScanner() {
-//        return new CoffeeScriptStructureScanner();
-//    }
-//
-//    @Override
-//    public boolean hasStructureScanner() {
-//        return true;
-//    }
-
-    @Override
-    public SemanticAnalyzer getSemanticAnalyzer() {
-        return CoffeeScriptSettings.get().isLegacy() ? new CoffeeScriptSemanticAnalyzer() : null;
-    }    
-    
+      
 }

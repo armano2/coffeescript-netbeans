@@ -13,10 +13,7 @@
 // limitations under the License.
 package coffeescript.nb.core;
 
-import coffeescript.nb.antlr.lexer.TokenEnumLexer;
-import coffeescript.nb.core.CoffeeScriptLanguage;
-import coffeescript.nb.core.CoffeeScriptTokenId;
-import coffeescript.nb.options.CoffeeScriptSettings;
+import coffeescript.nb.lexer.TokenEnumLexer;
 import java.util.Collection;
 import java.util.Deque;
 import java.util.LinkedList;
@@ -37,7 +34,6 @@ import org.openide.util.Exceptions;
 public class CoffeeScriptFormatter implements Formatter {
     
     public void reformat(Context context, ParserResult compilationInfo) {
-        if(CoffeeScriptSettings.get().isLegacy()) return;
         TokenHierarchy<CoffeeScriptTokenId> th = createTokenHierarchy(context);
         TokenSequence<CoffeeScriptTokenId> ts = th.tokenSequence(CoffeeScriptLanguage.getLanguage());
         Collection<IndentChange> indentChanges = new TreeSet<IndentChange>();

@@ -5,7 +5,7 @@
 
 package coffeescript.nb.core;
 
-import coffeescript.nb.antlr.lexer.TokenEnumLexer;
+import coffeescript.nb.lexer.TokenEnumLexer;
 import org.netbeans.api.lexer.Language;
 import org.netbeans.api.lexer.TokenId;
 
@@ -19,15 +19,12 @@ public class CoffeeScriptTokenId implements TokenId {
     private TokenEnumLexer token;
     private final Integer id;
     private String tokenString;
-    private boolean legacy;
 
     public CoffeeScriptTokenId(
             TokenEnumLexer token,
-            Integer id,
-            boolean legacy) {
+            Integer id) {
         this.token = token;
         this.id = id;
-        this.legacy = legacy;
     }
 
     @Override
@@ -63,10 +60,6 @@ public class CoffeeScriptTokenId implements TokenId {
 
     public void setTokenString(String tokenString) {
         this.tokenString = tokenString;
-    }
-
-    public boolean isLegacy() {
-        return legacy;
     }
 
     @Override

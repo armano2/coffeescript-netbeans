@@ -14,14 +14,11 @@
 
 package coffeescript.nb.core;
 
-import coffeescript.nb.lexer.CoffeeScriptLexer;
-import coffeescript.nb.antlr.lexer.AntlrTokenReaderLexer;
-import coffeescript.nb.antlr.lexer.TokenEnumLexer;
+import coffeescript.nb.lexer.TokenEnumLexer;
 import coffeescript.nb.antlr.parser.AntlrTokenReaderParser;
 import coffeescript.nb.lexer.CoffeeScriptLexerLegacy;
 import coffeescript.nb.core.embedding.CoffeeScriptRegexpLanguage;
 import coffeescript.nb.core.embedding.CoffeeScriptStringLanguage;
-import coffeescript.nb.options.CoffeeScriptSettings;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.EnumMap;
@@ -48,10 +45,9 @@ import org.netbeans.spi.lexer.LexerRestartInfo;
 public class CoffeeScriptLanguage extends LanguageHierarchy<CoffeeScriptTokenId> {
 
     private static final Language<CoffeeScriptTokenId> LANGUAGE = new CoffeeScriptLanguage().language();
-    private static List<CoffeeScriptTokenId> tokens;
     private static Map<coffeescript.nb.antlr.parser.TokenEnumParser,Integer> typeMap;
-    private static Map<Integer, CoffeeScriptTokenId> idToToken;
     private static Map<TokenEnumLexer, CoffeeScriptTokenId> enumToToken;
+    private static List<String> keywords;
 
     public static final Language<CoffeeScriptTokenId> getLanguage() {
         return LANGUAGE;
@@ -61,47 +57,40 @@ public class CoffeeScriptLanguage extends LanguageHierarchy<CoffeeScriptTokenId>
     }
 
     protected Collection<CoffeeScriptTokenId> createTokenIds() {
-        if (tokens == null) {
+        if (enumToToken == null) {
             init();
         }
-        return tokens;
+        return enumToToken.values();
     }
     
-    private static void init() {
-        AntlrTokenReaderLexer reader = new AntlrTokenReaderLexer();
-        AntlrTokenReaderParser reader2 = new AntlrTokenReaderParser();
-        tokens = new ArrayList<CoffeeScriptTokenId>(reader.readTokenFile());
-        reader2.readTokenFile();
-        typeMap = reader2.getTokens();
-        idToToken = new HashMap<Integer, CoffeeScriptTokenId>();
+    private static void init() {        
+        KeywordsReader keywordsReader = new KeywordsReader();
+        AntlrTokenReaderParser tokenReader = new AntlrTokenReaderParser();
+        keywords = keywordsReader.getKeywords();
+        typeMap = tokenReader.getTypeMap();
         enumToToken = new EnumMap<TokenEnumLexer, CoffeeScriptTokenId>(TokenEnumLexer.class);
-        int i = tokens.size()+1;
-        for (TokenEnumLexer en : TokenEnumLexer.getLegacyTokens()) {
+        int i = 0;
+        for (TokenEnumLexer en : TokenEnumLexer.values()) {
             if(!enumToToken.containsKey(en)) {
-                CoffeeScriptTokenId id = new CoffeeScriptTokenId(en, i, true);
-                i++;
-                tokens.add(id);
+                CoffeeScriptTokenId id = new CoffeeScriptTokenId(en, i);                
                 enumToToken.put(en, id);
+                i++;
             }
-        }
-        for (CoffeeScriptTokenId token : tokens) {
-            idToToken.put(token.ordinal(), token);
-            enumToToken.put(token.getTokenEnum(), token);
         }
     }
 
     @Override
     protected Lexer<CoffeeScriptTokenId> createLexer(LexerRestartInfo<CoffeeScriptTokenId> lri) {
-        return (CoffeeScriptSettings.get().isLegacy()) ? new CoffeeScriptLexerLegacy(lri) : new CoffeeScriptLexer(lri);
+        return new CoffeeScriptLexerLegacy(lri);
     }
 
     @Override
     protected Map<String, Collection<CoffeeScriptTokenId>> createTokenCategories() {
-        if (tokens == null) {
+        if (enumToToken == null) {
             init();
         }
         Map<String, Collection<CoffeeScriptTokenId>> map = new HashMap<String, Collection<CoffeeScriptTokenId>>();
-        for (CoffeeScriptTokenId token : tokens) {
+        for (CoffeeScriptTokenId token : enumToToken.values()) {
             Collection<CoffeeScriptTokenId> categoryCollection = map.get(token.primaryCategory());
             if (categoryCollection == null) {
                 categoryCollection = new HashSet<CoffeeScriptTokenId>();
@@ -115,9 +104,6 @@ public class CoffeeScriptLanguage extends LanguageHierarchy<CoffeeScriptTokenId>
     @Override
     protected EmbeddingPresence embeddingPresence(CoffeeScriptTokenId id) {
         switch (id.getTokenEnum()) {
-            case STRING:
-            case REGEX:
-            case JSTOKEN:
             case STRING_LEG:
             case HEREGEX_LEG:
             case JSTOKEN_LEG:
@@ -130,12 +116,9 @@ public class CoffeeScriptLanguage extends LanguageHierarchy<CoffeeScriptTokenId>
     protected LanguageEmbedding<?> embedding(Token<CoffeeScriptTokenId> token, LanguagePath languagePath, InputAttributes inputAttributes) {
         switch (token.id().getTokenEnum()) {
             case STRING_LEG:
-            case STRING:
                 return LanguageEmbedding.create(CoffeeScriptStringLanguage.getLanguage(), 0, 0);
-            case REGEX:
             case HEREGEX_LEG:
                 return LanguageEmbedding.create(CoffeeScriptRegexpLanguage.getLanguage(), 0, 0);
-            case JSTOKEN:
             case JSTOKEN_LEG:
                 Language<?> javasSriptLanguage = Language.find("text/javascript");
                 if (javasSriptLanguage != null && token.length() > 2) {
@@ -146,26 +129,26 @@ public class CoffeeScriptLanguage extends LanguageHierarchy<CoffeeScriptTokenId>
         return null;
     }
 
-    public static Map<coffeescript.nb.antlr.parser.TokenEnumParser, Integer> getTypeMap() {
-        return typeMap;
-    }    
-
     @Override
     protected String mimeType() {
         return Constants.MIME_TYPE;
     }
     
-    public static synchronized CoffeeScriptTokenId getToken(int id) {
-        if (idToToken == null) {
-            init();
-        }
-        return idToToken.get(id);
-    }
+    public static Map<coffeescript.nb.antlr.parser.TokenEnumParser, Integer> getTypeMap() {
+        return typeMap;
+    }    
     
     public static synchronized CoffeeScriptTokenId getToken(TokenEnumLexer id) {
         if (enumToToken == null) {
             init();
         }
         return enumToToken.get(id);
+    }
+    
+    public static synchronized List<String> getKeywords() {
+        if (keywords == null) {
+            init();
+        }
+        return keywords;
     }
 }
