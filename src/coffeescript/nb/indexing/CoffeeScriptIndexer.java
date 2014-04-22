@@ -9,7 +9,11 @@
  */
 package coffeescript.nb.indexing;
 
+import coffeescript.nb.antlr.parser.definitions.ClassDefinition;
 import coffeescript.nb.antlr.parser.definitions.CoffeeScriptFileDefinition;
+import coffeescript.nb.antlr.parser.definitions.Definition;
+import coffeescript.nb.antlr.parser.definitions.MethodDefinition;
+import coffeescript.nb.antlr.parser.definitions.VariableDefinition;
 import coffeescript.nb.core.context.ICoffeeScriptMainContext;
 import coffeescript.nb.core.Constants;
 import coffeescript.nb.parser.ParseAction;
@@ -41,17 +45,45 @@ public class CoffeeScriptIndexer extends EmbeddingIndexer {
     @Override
     protected void index(Indexable indexable, Result parserResult, Context context) {
         try {
-            ICoffeeScriptMainContext coffeeScriptFilesContext = Lookup.getDefault().lookup(ICoffeeScriptMainContext.class);
             IndexingSupport support = IndexingSupport.getInstance(context);
             IndexDocument document = support.createDocument(indexable);
             ParsingResult result = (ParsingResult) parserResult;
-            if(result != null) {
-                if(!result.isLegacy()) {
-                    FileObject fo = parserResult.getSnapshot().getSource().getFileObject();
-                    coffeeScriptFilesContext.addDefinition(fo, result.getGd());
+            
+            for(VariableDefinition def : result.getGd().getFields())  {
+                document.addPair(CoffeeScriptIndex.FIELD_KEY, def.serialize(), true, true);
+            }
+            
+            for(VariableDefinition def : result.getGd().getRootFields())  {
+                document.addPair(CoffeeScriptIndex.ROOT_FIELD_KEY, def.serialize(), true, true);
+            }
+            
+            for(MethodDefinition def : result.getGd().getMethods())  {
+                document.addPair(CoffeeScriptIndex.METHOD_KEY, def.serialize(), true, true);
+                for(Definition param: def.getParams()) {
+                    document.addPair(CoffeeScriptIndex.METHOD_PARAM_KEY, param.serialize(), true, true);
+                }
+            }            
+            
+            for(MethodDefinition def : result.getGd().getRootMethods()) {
+                document.addPair(CoffeeScriptIndex.ROOT_METHOD_KEY, def.serialize(), true, true);
+                for(Definition param: def.getParams()) {
+                    document.addPair(CoffeeScriptIndex.METHOD_PARAM_KEY, param.serialize(), true, true);
                 }
             }
-            document.addPair(CoffeeScriptIndex.CONTENT_KEY, Boolean.TRUE.toString(), true, true);
+            
+            for(ClassDefinition def : result.getGd().getRootClasses()) {
+                document.addPair(CoffeeScriptIndex.ROOT_CLASS_KEY, def.serialize(), true, true);
+                for(MethodDefinition method: def.getMethods()) {
+                    document.addPair(CoffeeScriptIndex.CLASS_METHOD_KEY, method.serialize(), true, true);
+                    for(Definition param: method.getParams()) {
+                        document.addPair(CoffeeScriptIndex.METHOD_PARAM_KEY, param.serialize(), true, true);
+                    }
+                }
+                for(VariableDefinition field : def.getFields())  {
+                    document.addPair(CoffeeScriptIndex.CLASS_FIELD_KEY, field.serialize(), true, true);
+                }
+            }
+            
             support.addDocument(document);
             
         } catch (IOException ex) {
@@ -72,6 +104,11 @@ public class CoffeeScriptIndexer extends EmbeddingIndexer {
                 return null;
             }
         }
+
+        @Override
+        public boolean scanStarted(Context context) {
+            return super.scanStarted(context); //To change body of generated methods, choose Tools | Templates.
+        }        
 
         @Override
         public void filesDeleted(Iterable<? extends Indexable> deleted, Context context) {
@@ -105,7 +142,7 @@ public class CoffeeScriptIndexer extends EmbeddingIndexer {
         @Override
         public int getIndexVersion() {
             return VERSION;
-        }
+        }        
 
         private boolean isIndexable(Snapshot snapshot) {
             return Constants.MIME_TYPE.equals(snapshot.getMimeType());

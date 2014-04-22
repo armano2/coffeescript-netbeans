@@ -9,17 +9,13 @@
  */
 package coffeescript.nb.indexing;
 
+import coffeescript.nb.antlr.parser.definitions.Definition;
 import coffeescript.nb.core.Constants;
-import com.sun.source.tree.Tree.Kind;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
-import java.util.Map;
-import java.util.Set;
 import org.netbeans.api.project.Project;
 import org.netbeans.modules.parsing.spi.indexing.support.IndexResult;
 import org.netbeans.modules.parsing.spi.indexing.support.QuerySupport;
@@ -32,9 +28,15 @@ import org.openide.util.Exceptions;
  */
 public class CoffeeScriptIndex {
 
-    public static final String CONTENT_KEY = "CONTENT_KEY"; //NOI18N
-    public static final String HINT_KEY = "HINT_KEY"; //NOI18N
-    public static final String KIND_KEY = "KIND"; //NOI18N
+    public static final String CLASS_KEY = "CLASS_KEY"; //NOI18N
+    public static final String FIELD_KEY = "FIELD_KEY"; //NOI18N
+    public static final String METHOD_KEY = "METHOD_KEY"; //NOI18N
+    public static final String CLASS_FIELD_KEY = "CLASS_FIELD_KEY"; //NOI18N
+    public static final String CLASS_METHOD_KEY = "CLASS_METHOD_KEY"; //NOI18N
+    public static final String METHOD_PARAM_KEY = "METHOD_PARAM_KEY"; //NOI18N
+    public static final String ROOT_METHOD_KEY = "ROOT_METHOD_KEY"; //NOI18N
+    public static final String ROOT_CLASS_KEY = "ROOT_CLASS_KEY"; //NOI18N
+    public static final String ROOT_FIELD_KEY = "ROOT_FIELD_KEY"; //NOI18N
 
     public static CoffeeScriptIndex create(Project project) {
         try {
@@ -54,64 +56,167 @@ public class CoffeeScriptIndex {
         this.querySupport = QuerySupport.forRoots(CoffeeScriptIndexer.Factory.NAME, CoffeeScriptIndexer.Factory.VERSION, sourceRoots.toArray(new FileObject[]{}));
     }
 
-    public Map<FileObject, Set<Kind>> getHintsWithKinds() {
-        Map<FileObject, Set<Kind>> result = new HashMap<FileObject, Set<Kind>>();
-        Collection<FileObject> fileObjects = new ArrayList<FileObject>();
+
+    public Collection<Definition> getAllFieldsInFile(FileObject fo) {
         try {
-            for (IndexResult indexResult : filterDeletedFiles(querySupport.query(CONTENT_KEY, "", QuerySupport.Kind.PREFIX))) {
-                Set<Kind> kinds = new HashSet<Kind>();
-                for (String value : indexResult.getValues(KIND_KEY)) {
-                    kinds.add(Kind.valueOf(value));
+            Collection<Definition> result = new LinkedList<Definition>();
+            for (IndexResult indexResult : filterDeletedFiles(querySupport.query(FIELD_KEY, "", QuerySupport.Kind.PREFIX))) {
+                if(indexResult.getFile().equals(fo)) {  
+                    for(String value : indexResult.getValues(FIELD_KEY))
+                        result.add(IndexedDefinitionFactory.create(value, indexResult.getFile()));
                 }
-                result.put(indexResult.getFile(), kinds);
+            }
+            for (IndexResult indexResult : filterDeletedFiles(querySupport.query(ROOT_FIELD_KEY, "", QuerySupport.Kind.PREFIX))) {
+                if(indexResult.getFile().equals(fo)) {  
+                    for(String value : indexResult.getValues(ROOT_FIELD_KEY))
+                        result.add(IndexedDefinitionFactory.create(value, indexResult.getFile()));
+                }
+            }
+            for (IndexResult indexResult : filterDeletedFiles(querySupport.query(METHOD_PARAM_KEY, "", QuerySupport.Kind.PREFIX))) {
+                if(indexResult.getFile().equals(fo)) {  
+                    for(String value : indexResult.getValues(METHOD_PARAM_KEY))
+                        result.add(IndexedDefinitionFactory.create(value, indexResult.getFile()));
+                }
             }
             return result;
-        } catch (IOException ex) {
-            Exceptions.printStackTrace(ex);
-            return Collections.emptyMap();
-        }
-    }
-
-    public Collection<FileObject> getAll() {
-        try {
-            return returnAsFiles(querySupport.query(CONTENT_KEY, "", QuerySupport.Kind.PREFIX));
+            
         } catch (IOException ex) {
             Exceptions.printStackTrace(ex);
             return Collections.emptyList();
         }
     }
-
-    public Collection<FileObject> getAllByKind(String kind) {
+    
+    public Collection<Definition> getAllClassesInFile(FileObject fo) {
         try {
-            Collection<IndexResult> filtered = new LinkedList<IndexResult>();
-            for (IndexResult indexResult : querySupport.query(HINT_KEY, Boolean.TRUE.toString(), QuerySupport.Kind.EXACT, KIND_KEY)) {
-                for (String resultKind : indexResult.getValues(KIND_KEY)) {
-                    if (kind.equals(resultKind)) {
-                        filtered.add(indexResult);
-                        continue;
-                    }
+            Collection<Definition> result = new LinkedList<Definition>();
+            for (IndexResult indexResult : filterDeletedFiles(querySupport.query(ROOT_CLASS_KEY, "", QuerySupport.Kind.PREFIX))) {
+                if(indexResult.getFile().equals(fo)) {  
+                    for(String value : indexResult.getValues(ROOT_CLASS_KEY))
+                        result.add(IndexedDefinitionFactory.create(value, indexResult.getFile()));
                 }
             }
-            return returnAsFiles(filtered);
+            return result;
+            
         } catch (IOException ex) {
             Exceptions.printStackTrace(ex);
             return Collections.emptyList();
         }
     }
-
-    public Set<com.sun.source.tree.Tree.Kind> getAllKinds() {
+    
+    public Collection<Definition> getClassFieldsInFile(FileObject fo) {
         try {
-            Set<com.sun.source.tree.Tree.Kind> kinds = new HashSet<com.sun.source.tree.Tree.Kind>();
-            for (IndexResult indexResult : querySupport.query(HINT_KEY, Boolean.TRUE.toString(), QuerySupport.Kind.EXACT, KIND_KEY)) {
-                String kind = indexResult.getValue(KIND_KEY);
-                if (kind != null) {
-                    kinds.add(com.sun.source.tree.Tree.Kind.valueOf(kind));
+            Collection<Definition> result = new LinkedList<Definition>();
+            for (IndexResult indexResult : filterDeletedFiles(querySupport.query(CLASS_FIELD_KEY, "", QuerySupport.Kind.PREFIX))) {
+                if(indexResult.getFile().equals(fo)) {  
+                    for(String value : indexResult.getValues(CLASS_FIELD_KEY))
+                        result.add(IndexedDefinitionFactory.create(value, indexResult.getFile()));
                 }
             }
-            return kinds;
+            return result;
+            
         } catch (IOException ex) {
             Exceptions.printStackTrace(ex);
-            return Collections.emptySet();
+            return Collections.emptyList();
+        }
+    }
+    
+    public Collection<Definition> getClassMethodsInFile(FileObject fo) {
+        try {
+            Collection<Definition> result = new LinkedList<Definition>();
+            for (IndexResult indexResult : filterDeletedFiles(querySupport.query(CLASS_METHOD_KEY, "", QuerySupport.Kind.PREFIX))) {
+                if(indexResult.getFile().equals(fo)) {  
+                    for(String value : indexResult.getValues(CLASS_METHOD_KEY))
+                        result.add(IndexedDefinitionFactory.create(value, indexResult.getFile()));
+                }
+            }
+            return result;
+            
+        } catch (IOException ex) {
+            Exceptions.printStackTrace(ex);
+            return Collections.emptyList();
+        }
+    }
+    
+    public Collection<Definition> getAllMethodsInFile(FileObject fo) {
+        try {
+            Collection<Definition> result = new LinkedList<Definition>();
+            for (IndexResult indexResult : filterDeletedFiles(querySupport.query(METHOD_KEY, "", QuerySupport.Kind.PREFIX))) {
+                if(indexResult.getFile().equals(fo)) {  
+                    for(String value : indexResult.getValues(METHOD_KEY))
+                        result.add(IndexedDefinitionFactory.create(value, indexResult.getFile()));
+                }
+            }
+            
+            for (IndexResult indexResult : filterDeletedFiles(querySupport.query(ROOT_METHOD_KEY, "", QuerySupport.Kind.PREFIX))) {
+                if(indexResult.getFile().equals(fo)) {  
+                    for(String value : indexResult.getValues(ROOT_METHOD_KEY))
+                        result.add(IndexedDefinitionFactory.create(value, indexResult.getFile()));
+                }
+            }
+            return result;
+            
+        } catch (IOException ex) {
+            Exceptions.printStackTrace(ex);
+            return Collections.emptyList();
+        }
+    }
+    
+    public Collection<Definition> getAllRootMethodsFromOtherFiles(FileObject fo) {
+        try {
+            Collection<Definition> result = new LinkedList<Definition>();
+            for (IndexResult indexResult : filterDeletedFiles(querySupport.query(METHOD_KEY, "", QuerySupport.Kind.PREFIX))) {
+                if(!indexResult.getFile().equals(fo)) {  
+                    for(String value : indexResult.getValues(METHOD_KEY))
+                        result.add(IndexedDefinitionFactory.create(value, indexResult.getFile()));
+                }
+            }
+            
+            for (IndexResult indexResult : filterDeletedFiles(querySupport.query(ROOT_METHOD_KEY, "", QuerySupport.Kind.PREFIX))) {
+                if(!indexResult.getFile().equals(fo)) {  
+                    for(String value : indexResult.getValues(ROOT_METHOD_KEY))
+                        result.add(IndexedDefinitionFactory.create(value, indexResult.getFile()));
+                }
+            }
+            return result;
+            
+        } catch (IOException ex) {
+            Exceptions.printStackTrace(ex);
+            return Collections.emptyList();
+        }
+    }
+    
+    public Collection<Definition> getAllRootFieldsFromOtherFiles(FileObject fo) {
+        try {
+            Collection<Definition> result = new LinkedList<Definition>();
+            for (IndexResult indexResult : filterDeletedFiles(querySupport.query(ROOT_FIELD_KEY, "", QuerySupport.Kind.PREFIX))) {       
+                if(!indexResult.getFile().equals(fo)) {  
+                    for(String value : indexResult.getValues(ROOT_FIELD_KEY))
+                        result.add(IndexedDefinitionFactory.create(value, indexResult.getFile()));
+                }
+                
+            }
+            return result;
+            
+        } catch (IOException ex) {
+            Exceptions.printStackTrace(ex);
+            return Collections.emptyList();
+        }
+    }
+    
+    public Collection<Definition> getAllClassesFromOtherFiles(FileObject fo) {
+        try {
+            Collection<Definition> result = new LinkedList<Definition>();
+            for (IndexResult indexResult : filterDeletedFiles(querySupport.query(ROOT_CLASS_KEY, "", QuerySupport.Kind.PREFIX))) {
+                if(!indexResult.getFile().equals(fo)) {  
+                    for(String value : indexResult.getValues(ROOT_CLASS_KEY))
+                        result.add(IndexedDefinitionFactory.create(value, indexResult.getFile()));
+                }
+            }
+            return result;
+            
+        } catch (IOException ex) {
+            Exceptions.printStackTrace(ex);
+            return Collections.emptyList();
         }
     }
 
