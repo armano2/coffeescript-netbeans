@@ -69,19 +69,6 @@ public class CoffeeScriptParserGrammarBaseListener implements CoffeeScriptParser
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterCatchRule(@NotNull CoffeeScriptParserGrammar.CatchRuleContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitCatchRule(@NotNull CoffeeScriptParserGrammar.CatchRuleContext ctx) { }
-
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
 	@Override public void enterRoot(@NotNull CoffeeScriptParserGrammar.RootContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -89,6 +76,19 @@ public class CoffeeScriptParserGrammarBaseListener implements CoffeeScriptParser
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitRoot(@NotNull CoffeeScriptParserGrammar.RootContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterCatchRule(@NotNull CoffeeScriptParserGrammar.CatchRuleContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitCatchRule(@NotNull CoffeeScriptParserGrammar.CatchRuleContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
@@ -186,19 +186,6 @@ public class CoffeeScriptParserGrammarBaseListener implements CoffeeScriptParser
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterForValue(@NotNull CoffeeScriptParserGrammar.ForValueContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitForValue(@NotNull CoffeeScriptParserGrammar.ForValueContext ctx) { }
-
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
 	@Override public void enterArg(@NotNull CoffeeScriptParserGrammar.ArgContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -206,19 +193,6 @@ public class CoffeeScriptParserGrammarBaseListener implements CoffeeScriptParser
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitArg(@NotNull CoffeeScriptParserGrammar.ArgContext ctx) { }
-
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterBodyRest(@NotNull CoffeeScriptParserGrammar.BodyRestContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitBodyRest(@NotNull CoffeeScriptParserGrammar.BodyRestContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
@@ -342,19 +316,6 @@ public class CoffeeScriptParserGrammarBaseListener implements CoffeeScriptParser
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterValueRest(@NotNull CoffeeScriptParserGrammar.ValueRestContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitValueRest(@NotNull CoffeeScriptParserGrammar.ValueRestContext ctx) { }
-
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
 	@Override public void enterTryRule(@NotNull CoffeeScriptParserGrammar.TryRuleContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -362,19 +323,6 @@ public class CoffeeScriptParserGrammarBaseListener implements CoffeeScriptParser
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitTryRule(@NotNull CoffeeScriptParserGrammar.TryRuleContext ctx) { }
-
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterDoubleSignOperation(@NotNull CoffeeScriptParserGrammar.DoubleSignOperationContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitDoubleSignOperation(@NotNull CoffeeScriptParserGrammar.DoubleSignOperationContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
@@ -394,13 +342,13 @@ public class CoffeeScriptParserGrammarBaseListener implements CoffeeScriptParser
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterArgListRest(@NotNull CoffeeScriptParserGrammar.ArgListRestContext ctx) { }
+	@Override public void enterDoubleSignOperation(@NotNull CoffeeScriptParserGrammar.DoubleSignOperationContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitArgListRest(@NotNull CoffeeScriptParserGrammar.ArgListRestContext ctx) { }
+	@Override public void exitDoubleSignOperation(@NotNull CoffeeScriptParserGrammar.DoubleSignOperationContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
@@ -414,19 +362,6 @@ public class CoffeeScriptParserGrammarBaseListener implements CoffeeScriptParser
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitIndexValue(@NotNull CoffeeScriptParserGrammar.IndexValueContext ctx) { }
-
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterIfBlockRest(@NotNull CoffeeScriptParserGrammar.IfBlockRestContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitIfBlockRest(@NotNull CoffeeScriptParserGrammar.IfBlockRestContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
@@ -485,19 +420,6 @@ public class CoffeeScriptParserGrammarBaseListener implements CoffeeScriptParser
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterAssignListRest(@NotNull CoffeeScriptParserGrammar.AssignListRestContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitAssignListRest(@NotNull CoffeeScriptParserGrammar.AssignListRestContext ctx) { }
-
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
 	@Override public void enterSimpleArgs(@NotNull CoffeeScriptParserGrammar.SimpleArgsContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -505,19 +427,6 @@ public class CoffeeScriptParserGrammarBaseListener implements CoffeeScriptParser
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitSimpleArgs(@NotNull CoffeeScriptParserGrammar.SimpleArgsContext ctx) { }
-
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterWhensRest(@NotNull CoffeeScriptParserGrammar.WhensRestContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitWhensRest(@NotNull CoffeeScriptParserGrammar.WhensRestContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
@@ -557,19 +466,6 @@ public class CoffeeScriptParserGrammarBaseListener implements CoffeeScriptParser
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitArray(@NotNull CoffeeScriptParserGrammar.ArrayContext ctx) { }
-
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterSimpleArgsRest(@NotNull CoffeeScriptParserGrammar.SimpleArgsRestContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitSimpleArgsRest(@NotNull CoffeeScriptParserGrammar.SimpleArgsRestContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
@@ -622,32 +518,6 @@ public class CoffeeScriptParserGrammarBaseListener implements CoffeeScriptParser
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitParam(@NotNull CoffeeScriptParserGrammar.ParamContext ctx) { }
-
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterExpressionRest(@NotNull CoffeeScriptParserGrammar.ExpressionRestContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitExpressionRest(@NotNull CoffeeScriptParserGrammar.ExpressionRestContext ctx) { }
-
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterParamListRest(@NotNull CoffeeScriptParserGrammar.ParamListRestContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitParamListRest(@NotNull CoffeeScriptParserGrammar.ParamListRestContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
@@ -745,19 +615,6 @@ public class CoffeeScriptParserGrammarBaseListener implements CoffeeScriptParser
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterInvocationRest(@NotNull CoffeeScriptParserGrammar.InvocationRestContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitInvocationRest(@NotNull CoffeeScriptParserGrammar.InvocationRestContext ctx) { }
-
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
 	@Override public void enterLoop(@NotNull CoffeeScriptParserGrammar.LoopContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -849,19 +706,6 @@ public class CoffeeScriptParserGrammarBaseListener implements CoffeeScriptParser
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterParamVar(@NotNull CoffeeScriptParserGrammar.ParamVarContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitParamVar(@NotNull CoffeeScriptParserGrammar.ParamVarContext ctx) { }
-
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
 	@Override public void enterArguments(@NotNull CoffeeScriptParserGrammar.ArgumentsContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -882,6 +726,19 @@ public class CoffeeScriptParserGrammarBaseListener implements CoffeeScriptParser
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitAccessor(@NotNull CoffeeScriptParserGrammar.AccessorContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterCommonAssignable(@NotNull CoffeeScriptParserGrammar.CommonAssignableContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitCommonAssignable(@NotNull CoffeeScriptParserGrammar.CommonAssignableContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
