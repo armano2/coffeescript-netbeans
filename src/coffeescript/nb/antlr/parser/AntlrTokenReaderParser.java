@@ -10,24 +10,22 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
+import org.openide.util.Exceptions;
 
 /**
  *
  * @author James Reid
  */
 public class AntlrTokenReaderParser {
-    private Map<TokenEnumParser, Integer> tokens = new HashMap<TokenEnumParser, Integer> ();
 
-    public AntlrTokenReaderParser() {
-    }
-    
-    public void readTokenFile() {
+    public Map<TokenEnumParser, Integer> getTypeMap() {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         InputStream inp = classLoader.getResourceAsStream(Constants.TOKENS_ANTLR_PARSER);
         BufferedReader input = new BufferedReader(new InputStreamReader(inp));
-        readTokenFile(input);
+        return readTokenFile(input);
     }
 
     /**
@@ -35,25 +33,20 @@ public class AntlrTokenReaderParser {
      *
      * @param buff
      */
-    private void readTokenFile(BufferedReader buff) {
-        String line = null;
+    private Map<TokenEnumParser, Integer> readTokenFile(BufferedReader buff) {
+        Map<TokenEnumParser, Integer> typeMap = new EnumMap<TokenEnumParser, Integer>(TokenEnumParser.class);
+        String line;
         try {
             while ((line = buff.readLine()) != null) {
                 String[] splLine = line.split("=");
                 String name = splLine[0];
                 int tokenOrdinal = Integer.parseInt(splLine[1].trim());
                 //add it into the vector of tokens
-                tokens.put(TokenEnumParser.tokenValue(name), tokenOrdinal);
+                typeMap.put(TokenEnumParser.tokenValue(name), tokenOrdinal);
             }
         } catch (IOException ex) {
+            Exceptions.printStackTrace(ex);
         }
-    }    
-
-    public Map<TokenEnumParser, Integer> getTokens() {
-        return tokens;
-    }
-    
-    
-    
-    
+        return typeMap;
+    }     
 }
