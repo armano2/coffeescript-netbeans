@@ -6,7 +6,6 @@
 
 package coffeescript.nb.parser;
 
-import coffeescript.nb.core.CoffeeScriptAutocompileContext;
 import coffeescript.nb.core.CoffeeScriptCompiler;
 import coffeescript.nb.core.CoffeeScriptUtils;
 import coffeescript.nb.options.CoffeeScriptSettings;
@@ -17,10 +16,10 @@ import org.openide.filesystems.FileObject;
  *
  * @author Miloš Pensimus
  */
-public class AutocompilationTask implements Runnable {
+public class CoffeeScriptAutocompileTask implements Runnable {
     private final Snapshot snapshot;
 
-    public AutocompilationTask(Snapshot snapshot) {
+    public CoffeeScriptAutocompileTask(Snapshot snapshot) {
         this.snapshot = snapshot;
     }
 
