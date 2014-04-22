@@ -39,7 +39,7 @@
 package coffeescript.nb.lexer;
 
 import coffeescript.nb.core.CoffeeScriptTokenId;
-import coffeescript.nb.antlr.lexer.TokenEnumLexer;
+import coffeescript.nb.core.CoffeeScriptLanguage;
 import java.util.List;
 import javax.swing.text.Document;
 import org.netbeans.api.lexer.Token;
@@ -85,12 +85,13 @@ public class LexUtilities {
         return ts;
     }
 
-    public static int getTokenStartOffset(Document doc, int caretOffset, int tokenOrdinal) {
-        TokenInfo tokenInfo = getTokenAtOffset(doc, caretOffset, tokenOrdinal);
+    public static int getTokenStartOffset(Document doc, int caretOffset, TokenEnumLexer tokenEnum) {
+        TokenInfo tokenInfo = getTokenAtOffset(doc, caretOffset, tokenEnum);
         return tokenInfo==null?-1:tokenInfo.getStart();
     }
 
-    public static TokenInfo getTokenAtOffset(Document doc, int caretOffset, int tokenOrdinal) {
+    public static TokenInfo getTokenAtOffset(Document doc, int caretOffset, TokenEnumLexer tokenEnum) {
+        int tokenOrdinal = CoffeeScriptLanguage.getToken(tokenEnum).ordinal();
         TokenInfo tokenInfo = null;
         NbEditorDocument editorDocument = (NbEditorDocument) doc;
         
@@ -102,7 +103,7 @@ public class LexUtilities {
             CoffeeScriptTokenId id = token.id();
             if (id.ordinal() == tokenOrdinal) {
                 CharSequence text = token.text();
-                tokenInfo = new TokenInfo(ts.offset(), ts.offset() + text.length(), text.toString());
+                tokenInfo = new TokenInfo(ts.offset(), ts.offset() + text.length(), text.toString(), tokenEnum);
             }
         }
         editorDocument.readUnlock();
@@ -193,11 +194,13 @@ public class LexUtilities {
         private final int start;
         private final int end;
         private final String text;
+        private final TokenEnumLexer tokenEnum;
 
-        public TokenInfo(int start, int end, String text) {
+        public TokenInfo(int start, int end, String text, TokenEnumLexer tokenEnum) {
             this.start = start;
             this.end = end;
             this.text = text;
+            this.tokenEnum = tokenEnum;
         }
 
         public String getText() {
@@ -211,6 +214,12 @@ public class LexUtilities {
         public int getEnd() {
             return end;
         }
+
+        public TokenEnumLexer getTokenEnum() {
+            return tokenEnum;
+        }
+        
+        
     }
 }
 

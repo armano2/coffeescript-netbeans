@@ -5,7 +5,6 @@
 package coffeescript.nb.lexer;
 
 import coffeescript.nb.core.CoffeeScriptTokenId;
-import coffeescript.nb.antlr.lexer.TokenEnumLexer;
 import javax.swing.text.AbstractDocument;
 import javax.swing.text.BadLocationException;
 import org.netbeans.api.lexer.Token;
@@ -52,19 +51,7 @@ public class CoffeeScriptBracesMatcher implements BracesMatcher {
                 
                 CoffeeScriptTokenId id = token.id();
                 
-                if (id.getTokenEnum() == TokenEnumLexer.LPAR) {
-                    return new int [] { ts.offset(), ts.offset() + token.length() };
-                } else if (id.getTokenEnum() == TokenEnumLexer.RPAR) {
-                    return new int [] { ts.offset(), ts.offset() + token.length() };
-                } else if (id.getTokenEnum() == TokenEnumLexer.LBRACE) {
-                    return new int [] { ts.offset(), ts.offset() + token.length() };
-                } else if (id.getTokenEnum() == TokenEnumLexer.RBRACE) {
-                    return new int [] { ts.offset(), ts.offset() + token.length() };
-                } else if (id.getTokenEnum() == TokenEnumLexer.LBRACKET) {
-                    return new int [] { ts.offset(), ts.offset() + token.length() };
-                } else if (id.getTokenEnum() == TokenEnumLexer.RBRACKET) {
-                    return new int [] { ts.offset(), ts.offset() + token.length() };
-                } else if (id.getTokenEnum() == TokenEnumLexer.LPAREN_LEG) {
+                if (id.getTokenEnum() == TokenEnumLexer.LPAREN_LEG) {
                     return new int [] { ts.offset(), ts.offset() + token.length() };
                 } else if (id.getTokenEnum() == TokenEnumLexer.RPAREN_LEG) {
                     return new int [] { ts.offset(), ts.offset() + token.length() };
@@ -109,25 +96,7 @@ public class CoffeeScriptBracesMatcher implements BracesMatcher {
                 CoffeeScriptTokenId id = token.id();
                 
                 OffsetRange r;
-                if (id.getTokenEnum() == TokenEnumLexer.LPAR) {
-                    r = LexUtilities.findFwd(doc, ts, TokenEnumLexer.LPAR, TokenEnumLexer.RPAR);
-                    return new int [] {r.getStart(), r.getEnd() };
-                } else if (id.getTokenEnum() == TokenEnumLexer.RPAR) {
-                    r = LexUtilities.findBwd(doc, ts, TokenEnumLexer.LPAR, TokenEnumLexer.RPAR);
-                    return new int [] {r.getStart(), r.getEnd() };
-                } else if (id.getTokenEnum() == TokenEnumLexer.LBRACE) {
-                    r = LexUtilities.findFwd(doc, ts, TokenEnumLexer.LBRACE, TokenEnumLexer.RBRACE);
-                    return new int [] {r.getStart(), r.getEnd() };
-                } else if (id.getTokenEnum() == TokenEnumLexer.RBRACE) {
-                    r = LexUtilities.findBwd(doc, ts, TokenEnumLexer.LBRACE, TokenEnumLexer.RBRACE);
-                    return new int [] {r.getStart(), r.getEnd() };
-                } else if (id.getTokenEnum() == TokenEnumLexer.LBRACKET) {
-                    r = LexUtilities.findFwd(doc, ts, TokenEnumLexer.LBRACKET, TokenEnumLexer.RBRACKET);
-                    return new int [] {r.getStart(), r.getEnd() };
-                } else if (id.getTokenEnum() == TokenEnumLexer.RBRACKET) {
-                    r = LexUtilities.findBwd(doc, ts, TokenEnumLexer.LBRACKET, TokenEnumLexer.RBRACKET);
-                    return new int [] {r.getStart(), r.getEnd() };
-                } else if (id.getTokenEnum() == TokenEnumLexer.LPAREN_LEG) {
+                if (id.getTokenEnum() == TokenEnumLexer.LPAREN_LEG) {
                     r = LexUtilities.findFwd(doc, ts, TokenEnumLexer.LPAREN_LEG, TokenEnumLexer.RPAREN_LEG);
                     return new int [] {r.getStart(), r.getEnd() };
                 } else if (id.getTokenEnum() == TokenEnumLexer.RPAREN_LEG) {
