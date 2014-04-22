@@ -61,7 +61,7 @@ public class ParseAction implements Callable<ParserResult> {
             grammarDesc.setFields(parseTreeListener.getVariables());
             grammarDesc.setMethods(parseTreeListener.getMethods());
             
-            SwingUtilities.invokeLater(new AutocompilationTask(snapshot));
+            SwingUtilities.invokeLater(new CoffeeScriptAutocompileTask(snapshot));
         } catch (CoffeeScriptNativeLexerException e) {            
             listener.addSingleError(e.getLine(), e.getColumn(), e.getMessage());
         } catch (Exception ex) {
