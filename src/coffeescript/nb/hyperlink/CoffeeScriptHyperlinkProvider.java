@@ -40,19 +40,32 @@ package coffeescript.nb.hyperlink;
 
 import coffeescript.nb.core.CoffeeScriptDataObject;
 import coffeescript.nb.antlr.lexer.CoffeeScriptLexerGrammar;
+import coffeescript.nb.antlr.lexer.TokenEnumLexer;
 import coffeescript.nb.antlr.parser.definitions.Definition;
 import coffeescript.nb.core.CoffeeScriptUtils;
 import coffeescript.nb.core.Constants;
 import coffeescript.nb.lexer.LexUtilities;
 import coffeescript.nb.antlr.parser.definitions.CoffeeScriptFileDefinition;
+import coffeescript.nb.core.CoffeeScriptLanguage;
+import coffeescript.nb.navigator.nodes.GoToRuleAction;
 import coffeescript.nb.options.CoffeeScriptSettings;
+import java.awt.Toolkit;
+import java.io.IOException;
 import javax.swing.text.Document;
 import javax.swing.text.JTextComponent;
+import javax.swing.text.StyledDocument;
 import org.netbeans.api.editor.mimelookup.MimeRegistration;
 import org.netbeans.lib.editor.hyperlink.spi.HyperlinkProvider;
 import org.netbeans.modules.editor.NbEditorDocument;
 import org.netbeans.modules.editor.NbEditorUtilities;
+import org.openide.cookies.EditorCookie;
+import org.openide.cookies.LineCookie;
+import org.openide.loaders.DataObject;
+import org.openide.loaders.DataObjectNotFoundException;
+import org.openide.text.Line;
 import org.openide.text.NbDocument;
+import org.openide.util.Exceptions;
+import org.openide.util.Lookup;
 
 /**
  *
@@ -80,10 +93,10 @@ public class CoffeeScriptHyperlinkProvider implements HyperlinkProvider {
             return false;
         }
         
-//        if (LexUtilities.isTokenPresentBackwards(doc, caretOffset, CoffeeScriptLexerGrammar.CLASS_TOK, 2)) return false;
-
         lastDocument = editorDocument;
-        this.tokenInfo = LexUtilities.getTokenAtOffset(doc, caretOffset, CoffeeScriptLexerGrammar.IDENTIFIER);
+        this.tokenInfo = LexUtilities.getTokenAtOffset(doc, caretOffset, TokenEnumLexer.IDENTIFIER_LEG);
+        if(tokenInfo == null)
+            this.tokenInfo = LexUtilities.getTokenAtOffset(doc, caretOffset, TokenEnumLexer.FIELD_LEG);
         return ((tokenInfo != null) && (tokenInfo.getStart() > -1) && (tokenInfo.getEnd() >= tokenInfo.getStart()));
     }
 
@@ -119,15 +132,54 @@ public class CoffeeScriptHyperlinkProvider implements HyperlinkProvider {
         if ((target == null) || (lastDocument != editorDocument)) {
             return;
         }
+        if(tokenInfo.getTokenEnum().equals(TokenEnumLexer.IDENTIFIER_LEG)) {
+            Definition definition = CoffeeScriptUtils.findForDefinition(caretOffset, tokenInfo.getText());
+            DataObject dataObject = null;
+            if (definition != null) {   
+                try {
+                    dataObject = DataObject.find(definition.getFileObject());
+                } catch (DataObjectNotFoundException ex) {
+                    Exceptions.printStackTrace(ex);
+                }
+                goToDefinition(dataObject, definition);
+            }
+        }
+        
+        if(tokenInfo.getTokenEnum().equals(TokenEnumLexer.FIELD_LEG)) {
+            Definition definition = CoffeeScriptUtils.findForClassMember(caretOffset, tokenInfo.getText().substring(1));
+            DataObject dataObject = null;
+            if (definition != null) {   
+                try {
+                    dataObject = DataObject.find(definition.getFileObject());
+                } catch (DataObjectNotFoundException ex) {
+                    Exceptions.printStackTrace(ex);
+                }
+                goToDefinition(dataObject, definition);
+            }
+        }
+        
+    }
+    
+    private void goToDefinition(DataObject dataObject, Definition definition) {
+        if(dataObject == null) return;
+        Lookup lookup = dataObject.getLookup();
+        LineCookie cookie = lookup.lookup(LineCookie.class);
+        EditorCookie editor = lookup.lookup(EditorCookie.class);
+        try {
+            StyledDocument doc = editor.openDocument();
+            if (cookie == null) {
+                return;
+            }
 
-        // place caret at start of rule
-        CoffeeScriptDataObject abnfDataObject = (CoffeeScriptDataObject) NbEditorUtilities.getDataObject(doc);
-        assert (abnfDataObject != null);
-        CoffeeScriptFileDefinition grammarDescriptor = abnfDataObject.getLookup().lookup(CoffeeScriptFileDefinition.class);
-        Definition ruleDescriptor = CoffeeScriptUtils.findForDefinition(grammarDescriptor.getRootBlock(), caretOffset, tokenInfo.getText());
-        if (ruleDescriptor != null) {
-            int offset = NbDocument.findLineOffset(editorDocument, ruleDescriptor.getLine()) + ruleDescriptor.getCharPositionInLine();
-            target.setCaretPosition(offset);
+            int line = NbDocument.findLineNumber(doc, definition.getStartOffset());
+            int column = NbDocument.findLineColumn(doc, definition.getStartOffset());
+
+            Line l = cookie.getLineSet().getCurrent(line);
+            l.show(Line.ShowOpenType.OPEN, Line.ShowVisibilityType.FOCUS, column);
+        } catch (IndexOutOfBoundsException ex) {
+            Toolkit.getDefaultToolkit().beep();
+        } catch (IOException ex) {
+            Exceptions.printStackTrace(ex);
         }
     }
 }
