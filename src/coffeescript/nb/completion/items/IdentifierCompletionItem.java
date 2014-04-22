@@ -45,10 +45,12 @@ package coffeescript.nb.completion.items;
 public abstract class IdentifierCompletionItem extends AbstractCompletionItem  {
 
     protected String fileName;
+    protected boolean decreasePriority;
 
-    public IdentifierCompletionItem(String text, String fileName, int startOffset, int carretOffset) {
+    public IdentifierCompletionItem(String text, String fileName, int startOffset, int carretOffset, boolean decreasePriority) {
         super(text, startOffset, carretOffset);
         this.fileName = fileName;
+        this.decreasePriority = decreasePriority;
     }
 
     @Override
@@ -69,6 +71,17 @@ public abstract class IdentifierCompletionItem extends AbstractCompletionItem  {
     @Override
     protected String getRightText() {
         return fileName;
+    }
+
+    @Override
+    public int getSortPriority() {
+        return decreasePriority ? getPriority()-1 : getPriority();
+    } 
+    
+    
+    
+    protected int getPriority() {
+        return 10;
     }
 
 }

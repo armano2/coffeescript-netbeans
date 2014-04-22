@@ -24,10 +24,11 @@ public class CoffeeScriptCompletionProvider implements CompletionProvider {
        
     @Override
     public CompletionTask createTask(int queryType, JTextComponent jtc) {
-        if (queryType != CompletionProvider.COMPLETION_QUERY_TYPE)
+        if (queryType != COMPLETION_QUERY_TYPE && queryType != COMPLETION_ALL_QUERY_TYPE)
             return null;
         
-        return new AsyncCompletionTask(CompletionQueryFactory.createCompletionQuery(), jtc);
+        boolean all = queryType == COMPLETION_ALL_QUERY_TYPE;
+        return new AsyncCompletionTask(CompletionQueryFactory.createCompletionQuery(all), jtc);
     }
 
     @Override

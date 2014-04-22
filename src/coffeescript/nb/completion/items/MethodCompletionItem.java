@@ -14,13 +14,8 @@ import org.openide.util.ImageUtilities;
  */
 public class MethodCompletionItem extends IdentifierCompletionItem {
 
-    public MethodCompletionItem(String text, String fileName, int startOffset, int carretOffset) {
-        super(text, fileName, startOffset, carretOffset);
-    }    
-
-    @Override
-    public int getSortPriority() {
-        return 10;
+    public MethodCompletionItem(String text, String fileName, int startOffset, int carretOffset, boolean decreasePriority) {
+        super(text, fileName, startOffset, carretOffset, decreasePriority);
     }
 
     @Override

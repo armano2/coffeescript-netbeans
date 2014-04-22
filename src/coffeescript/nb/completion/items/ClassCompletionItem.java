@@ -4,12 +4,11 @@
  */
 package coffeescript.nb.completion.items;
 
+import coffeescript.nb.antlr.parser.definitions.Definition;
+import coffeescript.nb.antlr.parser.definitions.VariableDefinition;
 import coffeescript.nb.core.Constants;
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Graphics;
+import java.util.Collection;
 import javax.swing.ImageIcon;
-import org.netbeans.spi.editor.completion.support.CompletionUtilities;
 import org.openide.util.ImageUtilities;
 
 /**
@@ -17,24 +16,17 @@ import org.openide.util.ImageUtilities;
  * @author Miloš Pensimus
  */
 public class ClassCompletionItem extends IdentifierCompletionItem {
-
-    public ClassCompletionItem(String text, String fileName, int startOffset, int carretOffset) {
-        super(text, fileName, startOffset, carretOffset);
-    }
     
-    
+    Collection<Definition> params;
 
-    @Override
-    public int getSortPriority() {
-        return 10;
-    }
+    public ClassCompletionItem(String text, String fileName, int startOffset, int carretOffset, boolean decreasePriority, Collection<Definition> params) {
+        super(text, fileName, startOffset, carretOffset, decreasePriority);
+        this.params = params;
+    }   
 
     @Override
     protected ImageIcon getIcon() {
         return ImageUtilities.loadImageIcon(Constants.CLASS_ICON, true);
     }
-    
-    
-
     
 }

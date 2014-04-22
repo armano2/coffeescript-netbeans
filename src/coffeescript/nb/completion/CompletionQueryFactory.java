@@ -12,7 +12,7 @@ import org.netbeans.spi.editor.completion.support.AsyncCompletionQuery;
  * @author Miloš Pensimus
  */
 public class CompletionQueryFactory {
-    public static AsyncCompletionQuery createCompletionQuery() {
-        return CoffeeScriptSettings.get().isLegacy() ? new CompletionQueryLegacy() : new CompletionQuery();        
+    public static AsyncCompletionQuery createCompletionQuery(boolean all) {
+        return CoffeeScriptSettings.get().isLegacy() ? new CompletionQueryLegacy() : new CompletionQuery(all);        
     }
 }
