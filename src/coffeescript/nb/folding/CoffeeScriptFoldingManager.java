@@ -53,20 +53,21 @@ import javax.swing.event.DocumentEvent;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.text.StyledDocument;
 import org.netbeans.api.editor.fold.Fold;
 import org.netbeans.api.editor.fold.FoldHierarchy;
 import org.netbeans.api.editor.fold.FoldType;
 import org.netbeans.api.lexer.Token;
 import org.netbeans.api.lexer.TokenHierarchy;
 import org.netbeans.api.lexer.TokenSequence;
+import org.netbeans.editor.BaseDocument;
 import org.netbeans.editor.GapObjectArray;
+import org.netbeans.editor.Utilities;
 import org.netbeans.spi.editor.fold.FoldHierarchyTransaction;
 import org.netbeans.spi.editor.fold.FoldManager;
 import org.netbeans.spi.editor.fold.FoldManagerFactory;
 import org.netbeans.spi.editor.fold.FoldOperation;
-import org.openide.util.Lookup;
 import org.openide.util.RequestProcessor;
-import org.openide.util.Utilities;
 
 /**
  * Fold maintainer that creates and updates custom folds.
@@ -88,6 +89,7 @@ public class CoffeeScriptFoldingManager implements FoldManager, Runnable {
     private int maxUpdateMarkOffset = -1;
     private List removedFoldList;
     private HashMap customFoldId = new HashMap();
+    private Deque<IdentRegion> indents = new ArrayDeque<IdentRegion>();
 
     private static final RequestProcessor RP = new RequestProcessor(CoffeeScriptFoldingManager.class.getName(),
             1, false, false);
@@ -281,8 +283,7 @@ public class CoffeeScriptFoldingManager implements FoldManager, Runnable {
     }
     
     private List<FoldMarkInfo> getMarkList(TokenSequence seq) {
-        List<FoldMarkInfo> markList = new ArrayList<FoldMarkInfo>();
-        Lookup lookup = Utilities.actionsGlobalContext();   
+        List<FoldMarkInfo> markList = new ArrayList<FoldMarkInfo>();  
         
         for(seq.moveStart(); seq.moveNext(); ) {
             Token token = seq.token();
@@ -291,7 +292,6 @@ public class CoffeeScriptFoldingManager implements FoldManager, Runnable {
             } catch (BadLocationException e) {
                 LOG.log(Level.WARNING, null, e);
             }
-
         }        
 
         return markList;
@@ -325,7 +325,7 @@ public class CoffeeScriptFoldingManager implements FoldManager, Runnable {
                 while (listMarkOffset >= arrayMarkOffset) {
                     if (listMarkOffset == arrayMarkOffset) {
                         // At the same offset - likely the same mark
-                        //   -> retain the collapsed state
+                        //   -> reRemoved dup mark from intain the collapsed state
                         listMark.setCollapsed(arrayMark.isCollapsed());
                     }
                     if (!arrayMark.isReleased()) { // make sure that the mark is released
@@ -469,17 +469,34 @@ public class CoffeeScriptFoldingManager implements FoldManager, Runnable {
     }
     private void scanToken(Token token, List<FoldMarkInfo> marks) throws BadLocationException {
         switch (((CoffeeScriptTokenId)token.id()).getTokenEnum()) {
-            case COMMENT:
-                marks.add(new FoldMarkInfo(true, token.offset(null), 0, "COMMENT_"+token.offset(null), false, null));
-                marks.add(new FoldMarkInfo(false, token.offset(null) + token.length()-1, 0, null, false, null));
+//            case COMMENT:
+//                marks.add(new FoldMarkInfo(true, token.offset(null), 0, "COMMENT_"+token.offset(null), false, null));
+//                marks.add(new FoldMarkInfo(false, token.offset(null) + token.length()-1, 0, null, false, null));
+//                break;
+            case INDENT_LEG:
+                Integer indent = (Integer) token.getProperty("indent");
+                IdentRegion identRegion = new IdentRegion(token.offset(null), indent);
+                indents.push(identRegion);
+                int from = Utilities.getFirstNonWhiteFwd((BaseDocument)doc, identRegion.start);
+                marks.add(new FoldMarkInfo(true, from, 0, "BLOCK_"+token.offset(null), false, null));
                 break;
-            case INDENT:
-                marks.add(new FoldMarkInfo(true, token.offset(null), 0, "BLOCK_"+token.offset(null), false, null));
+            case OUTDENT_LEG:
+                Integer outdent = (Integer) token.getProperty("indent");
+                int end = token.offset(null) + token.length();
+                int to = Utilities.getFirstNonWhiteBwd((BaseDocument)doc, end) + 1;
+                while (!indents.isEmpty() && (indents.peek().indent > outdent)) {
+                    marks.add(new FoldMarkInfo(false, to, 0, null, false, null));
+                    indents.pop();
+                }
+                
                 break;
-            case OUTDENT:
-                Integer multiplicity = (Integer) token.getProperty("multiplicity");
-                for(int i = 0; i<multiplicity; i++)
-                    marks.add(new FoldMarkInfo(false, token.offset(null), 0, null, false, null));
+//            case INDENT:
+//                marks.add(new FoldMarkInfo(true, token.offset(null), 0, "BLOCK_"+token.offset(null), false, null));
+//                break;
+//            case OUTDENT:
+//                Integer multiplicity = (Integer) token.getProperty("multiplicity");
+//                for(int i = 0; i<multiplicity; i++)
+//                    marks.add(new FoldMarkInfo(false, token.offset(null), 0, null, false, null));
         }
     }
 
@@ -720,7 +737,17 @@ public class CoffeeScriptFoldingManager implements FoldManager, Runnable {
             
             return sb.toString();
         }
+    }
+    
+    private static class IdentRegion {
 
+        int start;
+        int indent;
+
+        public IdentRegion(int start, int indent) {
+            this.start = start;
+            this.indent = indent;
+        }
     }
         
     public static final class Factory implements FoldManagerFactory {
