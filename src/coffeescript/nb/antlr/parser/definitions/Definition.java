@@ -4,7 +4,10 @@
  */
 package coffeescript.nb.antlr.parser.definitions;
 
+import java.util.Collection;
+import org.netbeans.modules.csl.api.OffsetRange;
 import org.netbeans.spi.editor.completion.CompletionItem;
+import org.openide.filesystems.FileObject;
 import org.openide.nodes.Node;
 import org.openide.util.Lookup;
 
@@ -14,13 +17,17 @@ import org.openide.util.Lookup;
  */
 public abstract class Definition {
     protected String text;
-    protected int line;
-    protected int charPositionInLine;
-    protected Definition(String text, int line, int charPositionInLine) {
-            this.text = text;
-            this.line = line;
-            this.charPositionInLine = charPositionInLine;
-    }
+    protected OffsetRange offsetRange;
+    protected OffsetRange blockOffsetRange;
+    protected boolean classMember;
+    protected FileObject fileObject;
+    
+    protected Definition(String text, int startOffset, int endOffset, int blockStartOffset, int blockEndOffset, boolean classMember) {
+        this.text = text;
+        this.offsetRange = new OffsetRange(startOffset, endOffset);  
+        this.blockOffsetRange = new OffsetRange(blockStartOffset, blockEndOffset); 
+        this.classMember = classMember;
+    }    
 
     public String getText() {
         return (text != null) ? text : "";
@@ -29,23 +36,45 @@ public abstract class Definition {
     public void setText(String text) {
         this.text = text;
     }
-
-    public int getLine() {
-        return line-1;
+    
+    public int getStartOffset() {
+        return offsetRange.getStart();
+    }
+    
+    public int getEndOffset() {
+        return offsetRange.getEnd();
     }
 
-    public void setLine(int line) {
-        this.line = line;
+    public int getBlockStartOffset() {
+        return blockOffsetRange.getStart();
     }
 
-    public int getCharPositionInLine() {
-        return charPositionInLine-1;
+    public int getBlockEndOffset() {
+        return blockOffsetRange.getEnd();
     }
 
-    public void setCharPositionInLine(int charPositionInLine) {
-        this.charPositionInLine = charPositionInLine;
-    } 
+    public boolean isClassMember() {
+        return classMember;
+    }
+    
+    public int blockSize() {
+        return blockOffsetRange.getLength();
+    }
+    
+    public boolean visible(int caretOffset) {
+        return blockOffsetRange.containsInclusive(caretOffset);
+    }
+
+    public FileObject getFileObject() {
+        return fileObject;
+    }
+
+    public void setFileObject(FileObject fileObject) {
+        this.fileObject = fileObject;
+    }
+
     public abstract Node getNode(Lookup lookup);
-    public abstract CompletionItem getCompletionItem(String fileName, int startOffset, int caretOffset);
+    public abstract Collection<CompletionItem> getCompletionItems(String fileName, int startOffset, int caretOffset,boolean decreasePriority);
+    public abstract String serialize();
     
 }

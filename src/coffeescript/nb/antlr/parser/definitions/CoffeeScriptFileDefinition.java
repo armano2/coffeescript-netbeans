@@ -38,15 +38,9 @@
  */
 package coffeescript.nb.antlr.parser.definitions;
 
-import coffeescript.nb.antlr.parser.definitions.BlockDefinition;
-import coffeescript.nb.antlr.parser.definitions.ClassDefinition;
-import coffeescript.nb.antlr.parser.definitions.Definition;
-import coffeescript.nb.antlr.parser.definitions.VariableDefinition;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
-import org.openide.nodes.Node;
 
 /**
  *
@@ -55,16 +49,13 @@ import org.openide.nodes.Node;
 public class CoffeeScriptFileDefinition {
     
     private String fileName;
-    private BlockDefinition rootBlock;
-    private List<ClassDefinition> classes;
-
-    public List<ClassDefinition> getClasses() {
-        return classes;
-    }
-
-    public void setClasses(List<ClassDefinition> classes) {
-        this.classes = classes;
-    }    
+    private Collection<ClassDefinition> rootClasses = new ArrayList<ClassDefinition>();
+    private Collection<VariableDefinition> rootFields = new ArrayList<VariableDefinition>();
+    private Collection<MethodDefinition> rootMethods = new ArrayList<MethodDefinition>();
+    private Collection<VariableDefinition> fields = new ArrayList<VariableDefinition>();
+    private Collection<MethodDefinition> methods = new ArrayList<MethodDefinition>();
+    
+    private List<Definition> rootDefinitions = new ArrayList<Definition>();
 
     
     public String getFileName() {
@@ -74,19 +65,51 @@ public class CoffeeScriptFileDefinition {
     public void setFileName(String fileName) {
         this.fileName = fileName;
     }
-    
-    public Collection<Definition> getVariables() {
-        List<Definition> l = new ArrayList<Definition>();
-        if(rootBlock != null) l.addAll(rootBlock.getVars());
-        return l;
+
+    public Collection<VariableDefinition> getFields() {
+        return fields;
     }
 
-    public BlockDefinition getRootBlock() {
-        return rootBlock;
+    public void setFields(Collection<VariableDefinition> fields) {
+        this.fields.addAll(fields);
     }
 
-    public void setRootBlock(BlockDefinition rootBlock) {
-        this.rootBlock = rootBlock;
+    public Collection<MethodDefinition> getMethods() {
+        return methods;
+    }
+
+    public void setMethods(Collection<MethodDefinition> methods) {
+        this.methods.addAll(methods);
+    } 
+
+    public Collection<ClassDefinition> getRootClasses() {
+        return rootClasses;
+    }
+
+    public void setRootClasses(Collection<ClassDefinition> rootClasses) {
+        this.rootClasses.addAll(rootClasses);
+        rootDefinitions.addAll(rootClasses);
+    }
+
+    public Collection<VariableDefinition> getRootFields() {
+        return rootFields;
+    }
+
+    public void setRootFields(Collection<VariableDefinition> rootFields) {
+        this.rootFields.addAll(rootFields);
+        rootDefinitions.addAll(rootFields);
+    }
+
+    public Collection<MethodDefinition> getRootMethods() {
+        return rootMethods;
+    }
+
+    public void setRootMethods(Collection<MethodDefinition> rootMethods) {
+        this.rootMethods.addAll(rootMethods);
+        rootDefinitions.addAll(rootMethods);
     }
     
+    public List<Definition> getRootDefinitions() {
+        return rootDefinitions;
+    }
 }
