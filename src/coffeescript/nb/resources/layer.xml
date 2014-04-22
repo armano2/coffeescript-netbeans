@@ -92,7 +92,6 @@
                 </folder>
                 <file name="coffeescript-nb-parser-SyntaxErrorsHighlightingTaskFactory.instance"/> 
                 <file name="coffeescript-nb-parser-AddFileDefinitionToContextTaskFactory.instance"/>
-                <!--<file name="coffeescript-nb-core-CoffeeScriptAutocompileTask$Factory.instance"/>-->
                 <folder name="FontsColors">
                     <folder name="NetBeans">
                         <folder name="Defaults">

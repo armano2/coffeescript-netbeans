@@ -38,16 +38,11 @@
  */
 package coffeescript.nb.hyperlink;
 
-import coffeescript.nb.core.CoffeeScriptDataObject;
-import coffeescript.nb.antlr.lexer.CoffeeScriptLexerGrammar;
-import coffeescript.nb.antlr.lexer.TokenEnumLexer;
+import coffeescript.nb.lexer.TokenEnumLexer;
 import coffeescript.nb.antlr.parser.definitions.Definition;
 import coffeescript.nb.core.CoffeeScriptUtils;
 import coffeescript.nb.core.Constants;
 import coffeescript.nb.lexer.LexUtilities;
-import coffeescript.nb.antlr.parser.definitions.CoffeeScriptFileDefinition;
-import coffeescript.nb.core.CoffeeScriptLanguage;
-import coffeescript.nb.navigator.nodes.GoToRuleAction;
 import coffeescript.nb.options.CoffeeScriptSettings;
 import java.awt.Toolkit;
 import java.io.IOException;
@@ -57,7 +52,6 @@ import javax.swing.text.StyledDocument;
 import org.netbeans.api.editor.mimelookup.MimeRegistration;
 import org.netbeans.lib.editor.hyperlink.spi.HyperlinkProvider;
 import org.netbeans.modules.editor.NbEditorDocument;
-import org.netbeans.modules.editor.NbEditorUtilities;
 import org.openide.cookies.EditorCookie;
 import org.openide.cookies.LineCookie;
 import org.openide.loaders.DataObject;
