@@ -18,6 +18,10 @@ public class Constants {
     
     public static final String FIELD_ICON = "coffeescript/nb/resources/field.png";
     
+    public static final String CONSTANT_ICON = "coffeescript/nb/resources/constant.png";
+    
+    public static final String FIELD_PRIVATE_ICON = "coffeescript/nb/resources/fieldPrivate.png";
+    
     public static final String COFFEE_SCRIPT_JS = "coffeescript/nb/resources/coffee-script.js";
     
     public static final String TOKENS_ANTLR_LEXER = "coffeescript/nb/antlr/lexer/CoffeeScriptLexerGrammar.tokens";
