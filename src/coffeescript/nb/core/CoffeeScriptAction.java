@@ -13,6 +13,7 @@
 // limitations under the License.
 package coffeescript.nb.core;
 
+import coffeescript.nb.parser.CoffeeScriptAutocompileContext;
 import coffeescript.nb.core.CoffeeScriptCompiler.CompilerResult;
 import coffeescript.nb.options.CoffeeScriptSettings;
 import java.awt.event.ActionEvent;

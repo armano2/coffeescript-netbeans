@@ -16,7 +16,7 @@ package coffeescript.nb.core;
 
 import coffeescript.nb.lexer.TokenEnumLexer;
 import coffeescript.nb.antlr.parser.AntlrTokenReaderParser;
-import coffeescript.nb.lexer.CoffeeScriptLexerLegacy;
+import coffeescript.nb.lexer.CoffeeScriptLexer;
 import coffeescript.nb.core.embedding.CoffeeScriptRegexpLanguage;
 import coffeescript.nb.core.embedding.CoffeeScriptStringLanguage;
 import java.util.ArrayList;
@@ -81,7 +81,7 @@ public class CoffeeScriptLanguage extends LanguageHierarchy<CoffeeScriptTokenId>
 
     @Override
     protected Lexer<CoffeeScriptTokenId> createLexer(LexerRestartInfo<CoffeeScriptTokenId> lri) {
-        return new CoffeeScriptLexerLegacy(lri);
+        return new CoffeeScriptLexer(lri);
     }
 
     @Override
