@@ -10,13 +10,10 @@
 package coffeescript.nb.indexing;
 
 import coffeescript.nb.antlr.parser.definitions.ClassDefinition;
-import coffeescript.nb.antlr.parser.definitions.CoffeeScriptFileDefinition;
 import coffeescript.nb.antlr.parser.definitions.Definition;
 import coffeescript.nb.antlr.parser.definitions.MethodDefinition;
 import coffeescript.nb.antlr.parser.definitions.VariableDefinition;
-import coffeescript.nb.core.context.ICoffeeScriptMainContext;
 import coffeescript.nb.core.Constants;
-import coffeescript.nb.parser.ParseAction;
 import coffeescript.nb.parser.ParsingResult;
 import java.io.IOException;
 import java.util.logging.Level;
@@ -29,9 +26,7 @@ import org.netbeans.modules.parsing.spi.indexing.EmbeddingIndexerFactory;
 import org.netbeans.modules.parsing.spi.indexing.Indexable;
 import org.netbeans.modules.parsing.spi.indexing.support.IndexDocument;
 import org.netbeans.modules.parsing.spi.indexing.support.IndexingSupport;
-import org.openide.filesystems.FileObject;
 import org.openide.util.Exceptions;
-import org.openide.util.Lookup;
 
 /**
  *
