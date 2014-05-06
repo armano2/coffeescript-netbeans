@@ -15,6 +15,7 @@ package coffeescript.nb.core;
 
 import coffeescript.nb.parser.CoffeeScriptAutocompileContext;
 import coffeescript.nb.core.CoffeeScriptCompiler.CompilerResult;
+import coffeescript.nb.navigator.CoffeeScriptNavigator;
 import coffeescript.nb.options.CoffeeScriptSettings;
 import java.awt.event.ActionEvent;
 import java.util.Collection;
@@ -25,7 +26,9 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import org.netbeans.api.progress.ProgressHandle;
 import org.netbeans.api.progress.ProgressHandleFactory;
+import org.openide.DialogDisplayer;
 import org.openide.LifecycleManager;
+import org.openide.NotifyDescriptor;
 import org.openide.awt.ActionID;
 import org.openide.awt.ActionReference;
 import org.openide.awt.ActionReferences;
@@ -45,7 +48,7 @@ import org.openide.windows.InputOutput;
 
 /**
  *
- * @author Denis Stepanov
+ * @author Denis Stepanov & Miloš Pensimus
  */
 @ActionID(category = "Build", id = "CoffeeScriptAction")
 @ActionRegistration(displayName = "coffeescript.nb.resources.Bundle#CoffeeScriptAction")
@@ -94,9 +97,29 @@ public class CoffeeScriptAction extends AbstractAction implements ContextAwareAc
                 switchmenu.add(new AbstractAction("Turn on") {
 
                     public void actionPerformed(ActionEvent ae) {
+                        if (CoffeeScriptSettings.get().isShowCompilerWarning() && CoffeeScriptSettings.CompilerType.RHINO.equals(CoffeeScriptSettings.get().getCompilerType())) {
+                            String defaultM = NbBundle.getMessage(CoffeeScriptAction.class, "LBL_never_show_again");
+                            String remind = NbBundle.getMessage(CoffeeScriptAction.class, "LBL_remind_later");
+                            NotifyDescriptor nd = new NotifyDescriptor(
+                                    NbBundle.getMessage(CoffeeScriptAction.class, "LBL_autocompile_warning_message"),
+                                    NbBundle.getMessage(CoffeeScriptAction.class, "LBL_rhino_detected"),
+                                    NotifyDescriptor.DEFAULT_OPTION,
+                                    NotifyDescriptor.WARNING_MESSAGE,
+                                    new String[]{defaultM, remind},
+                                    defaultM
+                            );
+
+                            String value = (String) DialogDisplayer.getDefault().notify(nd);
+
+                            if (value.equals(defaultM)) {
+                                CoffeeScriptSettings.get().setShowCompilerWarning(false);
+                            }
+                        }
+
                         for (CoffeeScriptDataObject dataObject : data) {
                             CoffeeScriptAutocompileContext.get().enableAutocompile(dataObject.getPrimaryFile());
                         }
+
                         RequestProcessor processor = RequestProcessor.getDefault();
                         final Future[] futureHolder = new Future[1];
                         futureHolder[0] = processor.submit(new CompilerTask(data, CoffeeScriptSettings.get().isBare()) {
@@ -159,7 +182,7 @@ public class CoffeeScriptAction extends AbstractAction implements ContextAwareAc
         private Cancellable cancellable;
 
         private CancelAction(Cancellable cancellable) {
-            putValue(Action.SMALL_ICON, ImageUtilities.loadImageIcon("coffeescript/nb/resources/stop.png", false));
+            putValue(Action.SMALL_ICON, ImageUtilities.loadImageIcon(Constants.STOP_ICON, false));
             putValue(Action.NAME, "Stop");
             setEnabled(false);
             this.cancellable = cancellable;

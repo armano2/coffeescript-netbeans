@@ -11,32 +11,43 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+
 package coffeescript.nb.core;
 
 import coffeescript.nb.antlr.parser.definitions.Definition;
-import coffeescript.nb.antlr.parser.definitions.VariableDefinition;
+import coffeescript.nb.antlr.parser.generated.CoffeeScriptParserGrammar;
 import coffeescript.nb.indexing.CoffeeScriptIndex;
 import coffeescript.nb.indexing.CoffeeScriptIndexer;
 import coffeescript.nb.options.CoffeeScriptSettings;
+import java.awt.Toolkit;
 import java.io.File;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import javax.swing.text.StyledDocument;
+import org.antlr.v4.runtime.atn.ATN;
+import org.antlr.v4.runtime.dfa.DFA;
 import org.netbeans.api.project.FileOwnerQuery;
 import org.netbeans.api.project.Project;
 import org.netbeans.api.queries.FileEncodingQuery;
+import org.netbeans.modules.parsing.api.indexing.IndexingManager;
+import org.openide.cookies.EditorCookie;
+import org.openide.cookies.LineCookie;
 import org.openide.filesystems.FileObject;
 import org.openide.filesystems.FileUtil;
+import org.openide.text.Line;
+import org.openide.text.NbDocument;
 import org.openide.util.Exceptions;
+import org.openide.util.Lookup;
 import org.openide.util.Utilities;
 
 /**
  *
- * @author Denis Stepanov
+ * @author Denis Stepanov & Miloš Pensimus
  */
 public class CoffeeScriptUtils {
 
@@ -98,6 +109,7 @@ public class CoffeeScriptUtils {
         }
         Definition acceptedDefinition = acceptDefinition(potentialDefinitions, caretOffset);
         if(acceptedDefinition == null) {
+            potentialDefinitions.clear();
             for(Definition def : index.getAllRootFieldsFromOtherFiles(fileObject)) {
                 if(name.equals(def.getText())) potentialDefinitions.add(def);
             }
@@ -127,6 +139,57 @@ public class CoffeeScriptUtils {
 
         return acceptedDefinition;
     }
+    
+    public static CoffeeScriptIndex getIndex() {
+        Project project = Utilities.actionsGlobalContext().lookup(Project.class);
+        FileObject fileObject = Utilities.actionsGlobalContext().lookup(FileObject.class);
+        if (project == null) {            
+            if (fileObject != null) {
+                project = FileOwnerQuery.getOwner(fileObject);
+            }
+        }     
+        return CoffeeScriptIndex.create(project);
+    }
+
+    public static void reindex() {
+        IndexingManager.getDefault().refreshAllIndices(CoffeeScriptIndexer.Factory.NAME);
+    }
+
+    public static void reindexFile(FileObject fileObject) {
+        IndexingManager.getDefault().refreshAllIndices(fileObject);
+    }
+    
+    public static void jumpToDefinition(Lookup lookup, Definition definition) {
+        LineCookie cookie = lookup.lookup(LineCookie.class);
+        EditorCookie editor = lookup.lookup(EditorCookie.class);
+        try {
+            StyledDocument doc = editor.openDocument();
+            if (cookie == null) {
+                return;
+            }
+
+            int line = NbDocument.findLineNumber(doc, definition.getStartOffset());
+            int column = NbDocument.findLineColumn(doc, definition.getStartOffset());
+
+            Line l = cookie.getLineSet().getCurrent(line);
+            l.show(Line.ShowOpenType.OPEN, Line.ShowVisibilityType.FOCUS, column);
+        } catch (IndexOutOfBoundsException ex) {
+            Toolkit.getDefaultToolkit().beep();
+        } catch (IOException ex) {
+            Exceptions.printStackTrace(ex);
+        }
+    }
+    
+    public static void cleanupAntlrATNConfig() {
+        CoffeeScriptParserGrammar parser = new CoffeeScriptParserGrammar(null);
+        ATN atn = parser.getATN();
+        for (int i = 0; i < atn.decisionToDFA.length; i++) {
+            atn.decisionToDFA[i] = new DFA(atn.getDecisionState(i), i);
+        }
+    }
+    
+    
+    // private part
         
     private static Definition acceptDefinition(List<Definition> potentialDefinitions, int caretOffset) {
         if(!potentialDefinitions.isEmpty()) {
@@ -151,16 +214,4 @@ public class CoffeeScriptUtils {
         }
         return null;
     }
-    
-    public static CoffeeScriptIndex getIndex() {
-        Project project = Utilities.actionsGlobalContext().lookup(Project.class);
-        FileObject fileObject = Utilities.actionsGlobalContext().lookup(FileObject.class);
-        if (project == null) {            
-            if (fileObject != null) {
-                project = FileOwnerQuery.getOwner(fileObject);
-            }
-        }     
-        return CoffeeScriptIndex.create(project);
-    }
-
 }

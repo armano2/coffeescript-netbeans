@@ -17,7 +17,6 @@ package coffeescript.nb.core;
 import coffeescript.nb.antlr.parser.definitions.CoffeeScriptFileDefinition;
 import java.io.IOException;
 import java.util.Collection;
-import org.netbeans.api.project.Project;
 import org.openide.filesystems.FileObject;
 import org.openide.loaders.DataNode;
 import org.openide.loaders.DataObjectExistsException;
@@ -28,7 +27,6 @@ import org.openide.nodes.Node;
 import org.openide.nodes.Children;
 import org.openide.util.Lookup;
 import org.openide.text.DataEditorSupport;
-import org.openide.util.Utilities;
 import org.openide.util.lookup.AbstractLookup;
 import org.openide.util.lookup.InstanceContent;
 import org.openide.util.lookup.Lookups;
@@ -36,7 +34,7 @@ import org.openide.util.lookup.ProxyLookup;
 
 /**
  * 
- * @author Denis Stepanov
+ * @author Denis Stepanov & Miloš Pensimus
  */
 public class CoffeeScriptDataObject extends MultiDataObject {
     
@@ -46,8 +44,6 @@ public class CoffeeScriptDataObject extends MultiDataObject {
     public CoffeeScriptDataObject(FileObject pf, MultiFileLoader loader) throws DataObjectExistsException, IOException {
         super(pf, loader);
         CookieSet cookies = getCookieSet();
-        Project project = Utilities.actionsGlobalContext().lookup(Project.class);
-//        content.add(project);
         this.lookup = new ProxyLookup(new Lookup[] {
             getCookieSet().getLookup(),
             Lookups.fixed(new CoffeeScriptSourceEncodingQuery()),
@@ -66,21 +62,14 @@ public class CoffeeScriptDataObject extends MultiDataObject {
         return lookup;
     }
 
-    public void publishGrammarDescriptor(CoffeeScriptFileDefinition descriptor)  {
+    public void publishFileDefinition(CoffeeScriptFileDefinition descriptor)  {
         if(descriptor == null) return;
-        Collection<? extends CoffeeScriptFileDefinition> allDescriptors = lookup.lookupAll(CoffeeScriptFileDefinition.class);
-        for (CoffeeScriptFileDefinition desc : allDescriptors) {
+        Collection<? extends CoffeeScriptFileDefinition> allFileDefinitions = lookup.lookupAll(CoffeeScriptFileDefinition.class);
+        for (CoffeeScriptFileDefinition desc : allFileDefinitions) {
             content.remove(desc);
         }
         content.add(descriptor);
     }
-    
-    public <T extends Object> void replaceAndPublish(T object, Class<T> type)  {
-        Collection<? extends T> allDescriptors = lookup.lookupAll(type);
-        for (T desc : allDescriptors) {
-            content.remove(desc);
-        }
-        content.add(object);
-    }
+
     
 }

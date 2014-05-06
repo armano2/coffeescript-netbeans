@@ -13,11 +13,11 @@
 // limitations under the License.
 package coffeescript.nb.core;
 
-import coffeescript.nb.parser.ErrorDescription;
+import coffeescript.nb.parser.ErrorDefinition;
 
 /**
  *
- * @author Denis Stepanov
+ * @author Denis Stepanov & Miloš Pensimus
  */
 public interface CoffeeScriptCompiler {
     
@@ -81,10 +81,10 @@ public interface CoffeeScriptCompiler {
             return message;
         }
         
-        public ErrorDescription getErrorDesription() {
+        public ErrorDefinition getErrorDefinition() {
             int errorLine = (line == -1) ? 0 : line;
             String errorMessage = (line == -1) ? message : errorName;
-            return new ErrorDescription(errorLine, column, errorMessage);
+            return new ErrorDefinition (errorLine, column, errorMessage);
         }
 
     }

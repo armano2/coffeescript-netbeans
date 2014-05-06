@@ -22,7 +22,7 @@ import org.netbeans.modules.parsing.spi.Parser;
 
 /**
  *
- * @author Denis Stepanov
+ * @author Denis Stepanov & Miloš Pensimus
  */
 @LanguageRegistration(mimeType = Constants.MIME_TYPE)
 public class CoffeeScriptLanguageRegistration extends DefaultLanguageConfig {
@@ -50,6 +50,6 @@ public class CoffeeScriptLanguageRegistration extends DefaultLanguageConfig {
     @Override
     public String getDisplayName() {
         return "CoffeeScript";
-    }
+    }  
       
 }

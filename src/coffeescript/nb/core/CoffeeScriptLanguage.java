@@ -15,11 +15,10 @@
 package coffeescript.nb.core;
 
 import coffeescript.nb.lexer.TokenEnumLexer;
-import coffeescript.nb.antlr.parser.AntlrTokenReaderParser;
+import coffeescript.nb.antlr.parser.AntlrTokenReader;
 import coffeescript.nb.lexer.CoffeeScriptLexer;
 import coffeescript.nb.core.embedding.CoffeeScriptRegexpLanguage;
 import coffeescript.nb.core.embedding.CoffeeScriptStringLanguage;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.EnumMap;
 import java.util.HashMap;
@@ -39,7 +38,7 @@ import org.netbeans.spi.lexer.LexerRestartInfo;
 
 /**
  * 
- * @author Denis Stepanov
+ * @author Denis Stepanov & Miloš Pensimus
  */
 @PathRecognizerRegistration(mimeTypes = Constants.MIME_TYPE)
 public class CoffeeScriptLanguage extends LanguageHierarchy<CoffeeScriptTokenId> {
@@ -65,7 +64,7 @@ public class CoffeeScriptLanguage extends LanguageHierarchy<CoffeeScriptTokenId>
     
     private static void init() {        
         KeywordsReader keywordsReader = new KeywordsReader();
-        AntlrTokenReaderParser tokenReader = new AntlrTokenReaderParser();
+        AntlrTokenReader tokenReader = new AntlrTokenReader();
         keywords = keywordsReader.getKeywords();
         typeMap = tokenReader.getTypeMap();
         enumToToken = new EnumMap<TokenEnumLexer, CoffeeScriptTokenId>(TokenEnumLexer.class);
@@ -104,9 +103,9 @@ public class CoffeeScriptLanguage extends LanguageHierarchy<CoffeeScriptTokenId>
     @Override
     protected EmbeddingPresence embeddingPresence(CoffeeScriptTokenId id) {
         switch (id.getTokenEnum()) {
-            case STRING_LEG:
-            case HEREGEX_LEG:
-            case JSTOKEN_LEG:
+            case STRING:
+            case HEREGEX:
+            case JSTOKEN:
                 return EmbeddingPresence.ALWAYS_QUERY;
         }
         return null;
@@ -115,11 +114,11 @@ public class CoffeeScriptLanguage extends LanguageHierarchy<CoffeeScriptTokenId>
     @Override
     protected LanguageEmbedding<?> embedding(Token<CoffeeScriptTokenId> token, LanguagePath languagePath, InputAttributes inputAttributes) {
         switch (token.id().getTokenEnum()) {
-            case STRING_LEG:
+            case STRING:
                 return LanguageEmbedding.create(CoffeeScriptStringLanguage.getLanguage(), 0, 0);
-            case HEREGEX_LEG:
+            case HEREGEX:
                 return LanguageEmbedding.create(CoffeeScriptRegexpLanguage.getLanguage(), 0, 0);
-            case JSTOKEN_LEG:
+            case JSTOKEN:
                 Language<?> javasSriptLanguage = Language.find("text/javascript");
                 if (javasSriptLanguage != null && token.length() > 2) {
                     return LanguageEmbedding.create(javasSriptLanguage, 1, 1);
