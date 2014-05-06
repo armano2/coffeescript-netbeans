@@ -43,12 +43,12 @@ import org.openide.util.lookup.Lookups;
 
 /**
  *
- * @author Denis Stepanov
+ * @author Denis Stepanov & Miloš Pensimus
  */
 public class CoffeeScriptProject implements Project {
 
-    private FileObject projectDirectory;
-    private ProjectState state;
+    private final FileObject projectDirectory;
+    private final ProjectState state;
     private Lookup lookup;
     private ClassPath sourcePath;
    

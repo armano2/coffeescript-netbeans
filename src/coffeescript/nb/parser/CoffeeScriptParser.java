@@ -28,22 +28,23 @@ import org.openide.util.RequestProcessor;
 
 /**
  * 
- * @author Denis Stepanov
+ * @author Denis Stepanov & Miloš Pensimus
  */
 public class CoffeeScriptParser extends Parser {
 
     private static final RequestProcessor PARSER_TASK = new RequestProcessor(CoffeeScriptParser.class.getName(), 1);
     private Future<ParserResult> future;
 
+    @Override
     public void parse(final Snapshot snapshot, Task task, SourceModificationEvent event) throws ParseException {
         future = PARSER_TASK.submit(ParseActionFactory.createParseAction(snapshot));
     }
 
+    @Override
     public Result getResult(Task task) throws ParseException {
         try {
             return future.get(60, TimeUnit.SECONDS);
         } catch (Exception ex) {
-            ex.printStackTrace();
         } // Ignore
         future.cancel(true);
         return null;
