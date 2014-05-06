@@ -14,6 +14,7 @@
 package coffeescript.nb.options;
 
 import coffeescript.nb.core.CoffeeScriptNodeJSCompiler;
+import coffeescript.nb.core.CoffeeScriptUtils;
 import coffeescript.nb.options.CoffeeScriptSettings.CompilerType;
 import java.awt.Desktop;
 import javax.swing.JFileChooser;
@@ -26,7 +27,7 @@ import org.openide.windows.WindowManager;
 
 /**
  *
- * @author Denis Stepanov
+ * @author Denis Stepanov & Miloš Pensimus
  */
 public class CoffeeScriptOptionsPanel extends javax.swing.JPanel
 {
@@ -48,6 +49,7 @@ public class CoffeeScriptOptionsPanel extends javax.swing.JPanel
             execChanged();
         }
     };
+    private boolean refreshIndex = false;
 
     public CoffeeScriptOptionsPanel(CoffeeScriptOptionsPanelController controller)
     {
@@ -96,6 +98,8 @@ public class CoffeeScriptOptionsPanel extends javax.swing.JPanel
         }
         getSettings().setOutputFolder(outputFolderTextField.getText());
         getSettings().setUseUTF8Encoding(utfCheckbox.isSelected());
+        
+        afterApplyAction();
     }
 
     public boolean isSettingsValid()
@@ -227,7 +231,7 @@ public class CoffeeScriptOptionsPanel extends javax.swing.JPanel
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(compilerSettings, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addContainerGap())
-                    .addComponent(compilerHelpScroll)
+                    .addComponent(compilerHelpScroll, javax.swing.GroupLayout.DEFAULT_SIZE, 566, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(compilerLabel)
@@ -256,11 +260,11 @@ public class CoffeeScriptOptionsPanel extends javax.swing.JPanel
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(legacyCheckbox, javax.swing.GroupLayout.PREFERRED_SIZE, 19, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(9, 9, 9)
-                .addComponent(compilerHelpScroll, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(30, 30, 30)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(compilerHelpScroll, javax.swing.GroupLayout.DEFAULT_SIZE, 165, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(compilerSettings, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(14, Short.MAX_VALUE))
+                .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -314,6 +318,7 @@ public class CoffeeScriptOptionsPanel extends javax.swing.JPanel
 
     private void legacyCheckboxStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_legacyCheckboxStateChanged
         controller.changed();
+        refreshIndex = getSettings().isLegacy() && !legacyCheckbox.isSelected();
     }//GEN-LAST:event_legacyCheckboxStateChanged
 
     private void execChanged()
@@ -337,4 +342,9 @@ public class CoffeeScriptOptionsPanel extends javax.swing.JPanel
     private javax.swing.JTextField outputFolderTextField;
     private javax.swing.JCheckBox utfCheckbox;
     // End of variables declaration//GEN-END:variables
+    
+    private void afterApplyAction() {
+        if(refreshIndex) CoffeeScriptUtils.reindex();
+    }
+
 }

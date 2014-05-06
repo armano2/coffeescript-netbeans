@@ -21,7 +21,7 @@ import org.openide.util.NbPreferences;
 
 /**
  *
- * @author Denis Stepanov
+ * @author Denis Stepanov & Miloš Pensimus
  */
 public class CoffeeScriptSettings {
 
@@ -98,11 +98,19 @@ public class CoffeeScriptSettings {
     public void setLegacy(boolean selected) {
         getPreferences().putBoolean("legacySupport", selected);
     }
+    
+    public boolean isShowCompilerWarning() {
+        return getPreferences().getBoolean("showCompilerWarning", true);
+    }
+
+    public void setShowCompilerWarning(boolean showCompilerWarning) {
+        getPreferences().putBoolean("showCompilerWarning", showCompilerWarning);
+    }
 
     public enum CompilerType {
 
-        RHINO("Rhino (JavaScript for Java)"),
-        NODEJS("CoffeeScript (Node.js)");
+        RHINO("Rhino (JavaScript for Java)"), //NOI18N
+        NODEJS("CoffeeScript (Node.js)"); //NOI18N
         private final String label;
 
         private CompilerType(String label) {

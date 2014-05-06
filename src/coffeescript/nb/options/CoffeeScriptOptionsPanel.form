@@ -28,7 +28,7 @@
                       <Component id="compilerSettings" max="32767" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
-                  <Component id="compilerHelpScroll" alignment="0" max="32767" attributes="0"/>
+                  <Component id="compilerHelpScroll" alignment="0" pref="566" max="32767" attributes="0"/>
                   <Group type="102" attributes="0">
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Component id="compilerLabel" min="-2" max="-2" attributes="1"/>
@@ -67,11 +67,11 @@
                   <Component id="jLabel1" min="-2" pref="15" max="-2" attributes="0"/>
                   <Component id="legacyCheckbox" min="-2" pref="19" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace min="-2" pref="9" max="-2" attributes="0"/>
-              <Component id="compilerHelpScroll" min="-2" pref="117" max="-2" attributes="0"/>
-              <EmptySpace min="-2" pref="30" max="-2" attributes="0"/>
+              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+              <Component id="compilerHelpScroll" pref="165" max="32767" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
               <Component id="compilerSettings" min="-2" max="-2" attributes="0"/>
-              <EmptySpace pref="15" max="32767" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
