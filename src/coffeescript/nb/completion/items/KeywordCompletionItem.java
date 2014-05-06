@@ -1,34 +1,31 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+// Copyright 2014 Miloš Pensimus
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 package coffeescript.nb.completion.items;
 
 import coffeescript.nb.core.Constants;
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.event.KeyEvent;
 import javax.swing.ImageIcon;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.JTextComponent;
-import javax.swing.text.StyledDocument;
-import org.netbeans.api.editor.completion.Completion;
-import org.netbeans.spi.editor.completion.CompletionItem;
-import org.netbeans.spi.editor.completion.CompletionTask;
-import org.netbeans.spi.editor.completion.support.CompletionUtilities;
-import org.openide.ErrorManager;
-import org.openide.text.NbDocument;
 import org.openide.util.ImageUtilities;
 
 /**
  *
- * @author milos
+ * @author Miloš Pensimus
  */
 public class KeywordCompletionItem extends AbstractCompletionItem  {
 
     public KeywordCompletionItem(String keywordName, int startOffset, int carretOffset) {
-        super(keywordName, startOffset, carretOffset);
+        super(keywordName,keywordName, startOffset, carretOffset);
     }
 
     @Override
@@ -43,12 +40,12 @@ public class KeywordCompletionItem extends AbstractCompletionItem  {
 
     @Override
     protected String getLeftText() {
-        return text;
+        return visibleText;
     }
 
     @Override
     protected String getRightText() {
-        return "Keyword";
+        return "Keyword"; //NOI18N
     }    
     
 }
