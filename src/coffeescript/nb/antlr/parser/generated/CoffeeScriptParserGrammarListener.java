@@ -1,5 +1,6 @@
-// Generated from CoffeeScriptParserGrammar.g4 by ANTLR 4.2.2
-package coffeescript.nb.antlr.parser;
+// Generated from CoffeeScriptParserGrammar.g4 by ANTLR 4.x
+package coffeescript.nb.antlr.parser.generated;
+import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.misc.NotNull;
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 
@@ -18,7 +19,6 @@ public interface CoffeeScriptParserGrammarListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitExpression(@NotNull CoffeeScriptParserGrammar.ExpressionContext ctx);
-
 	/**
 	 * Enter a parse tree produced by {@link CoffeeScriptParserGrammar#body}.
 	 * @param ctx the parse tree
@@ -29,7 +29,6 @@ public interface CoffeeScriptParserGrammarListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitBody(@NotNull CoffeeScriptParserGrammar.BodyContext ctx);
-
 	/**
 	 * Enter a parse tree produced by {@link CoffeeScriptParserGrammar#assign}.
 	 * @param ctx the parse tree
@@ -40,7 +39,6 @@ public interface CoffeeScriptParserGrammarListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitAssign(@NotNull CoffeeScriptParserGrammar.AssignContext ctx);
-
 	/**
 	 * Enter a parse tree produced by {@link CoffeeScriptParserGrammar#argList}.
 	 * @param ctx the parse tree
@@ -51,7 +49,6 @@ public interface CoffeeScriptParserGrammarListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitArgList(@NotNull CoffeeScriptParserGrammar.ArgListContext ctx);
-
 	/**
 	 * Enter a parse tree produced by {@link CoffeeScriptParserGrammar#root}.
 	 * @param ctx the parse tree
@@ -62,7 +59,6 @@ public interface CoffeeScriptParserGrammarListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitRoot(@NotNull CoffeeScriptParserGrammar.RootContext ctx);
-
 	/**
 	 * Enter a parse tree produced by {@link CoffeeScriptParserGrammar#catchRule}.
 	 * @param ctx the parse tree
@@ -73,7 +69,6 @@ public interface CoffeeScriptParserGrammarListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitCatchRule(@NotNull CoffeeScriptParserGrammar.CatchRuleContext ctx);
-
 	/**
 	 * Enter a parse tree produced by {@link CoffeeScriptParserGrammar#simpleAssignableOperation}.
 	 * @param ctx the parse tree
@@ -84,7 +79,6 @@ public interface CoffeeScriptParserGrammarListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitSimpleAssignableOperation(@NotNull CoffeeScriptParserGrammar.SimpleAssignableOperationContext ctx);
-
 	/**
 	 * Enter a parse tree produced by {@link CoffeeScriptParserGrammar#optComma}.
 	 * @param ctx the parse tree
@@ -95,7 +89,6 @@ public interface CoffeeScriptParserGrammarListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitOptComma(@NotNull CoffeeScriptParserGrammar.OptCommaContext ctx);
-
 	/**
 	 * Enter a parse tree produced by {@link CoffeeScriptParserGrammar#paramList}.
 	 * @param ctx the parse tree
@@ -106,7 +99,6 @@ public interface CoffeeScriptParserGrammarListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitParamList(@NotNull CoffeeScriptParserGrammar.ParamListContext ctx);
-
 	/**
 	 * Enter a parse tree produced by {@link CoffeeScriptParserGrammar#invocation}.
 	 * @param ctx the parse tree
@@ -117,7 +109,6 @@ public interface CoffeeScriptParserGrammarListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitInvocation(@NotNull CoffeeScriptParserGrammar.InvocationContext ctx);
-
 	/**
 	 * Enter a parse tree produced by {@link CoffeeScriptParserGrammar#optFuncExist}.
 	 * @param ctx the parse tree
@@ -128,7 +119,6 @@ public interface CoffeeScriptParserGrammarListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitOptFuncExist(@NotNull CoffeeScriptParserGrammar.OptFuncExistContext ctx);
-
 	/**
 	 * Enter a parse tree produced by {@link CoffeeScriptParserGrammar#simpleAssignable}.
 	 * @param ctx the parse tree
@@ -139,7 +129,6 @@ public interface CoffeeScriptParserGrammarListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitSimpleAssignable(@NotNull CoffeeScriptParserGrammar.SimpleAssignableContext ctx);
-
 	/**
 	 * Enter a parse tree produced by {@link CoffeeScriptParserGrammar#thisProperty}.
 	 * @param ctx the parse tree
@@ -150,7 +139,6 @@ public interface CoffeeScriptParserGrammarListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitThisProperty(@NotNull CoffeeScriptParserGrammar.ThisPropertyContext ctx);
-
 	/**
 	 * Enter a parse tree produced by {@link CoffeeScriptParserGrammar#arg}.
 	 * @param ctx the parse tree
@@ -161,7 +149,6 @@ public interface CoffeeScriptParserGrammarListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitArg(@NotNull CoffeeScriptParserGrammar.ArgContext ctx);
-
 	/**
 	 * Enter a parse tree produced by {@link CoffeeScriptParserGrammar#splat}.
 	 * @param ctx the parse tree
@@ -172,7 +159,6 @@ public interface CoffeeScriptParserGrammarListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitSplat(@NotNull CoffeeScriptParserGrammar.SplatContext ctx);
-
 	/**
 	 * Enter a parse tree produced by {@link CoffeeScriptParserGrammar#throwRule}.
 	 * @param ctx the parse tree
@@ -183,7 +169,6 @@ public interface CoffeeScriptParserGrammarListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitThrowRule(@NotNull CoffeeScriptParserGrammar.ThrowRuleContext ctx);
-
 	/**
 	 * Enter a parse tree produced by {@link CoffeeScriptParserGrammar#when}.
 	 * @param ctx the parse tree
@@ -194,7 +179,6 @@ public interface CoffeeScriptParserGrammarListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitWhen(@NotNull CoffeeScriptParserGrammar.WhenContext ctx);
-
 	/**
 	 * Enter a parse tree produced by {@link CoffeeScriptParserGrammar#value}.
 	 * @param ctx the parse tree
@@ -205,7 +189,6 @@ public interface CoffeeScriptParserGrammarListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitValue(@NotNull CoffeeScriptParserGrammar.ValueContext ctx);
-
 	/**
 	 * Enter a parse tree produced by {@link CoffeeScriptParserGrammar#whens}.
 	 * @param ctx the parse tree
@@ -216,7 +199,6 @@ public interface CoffeeScriptParserGrammarListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitWhens(@NotNull CoffeeScriptParserGrammar.WhensContext ctx);
-
 	/**
 	 * Enter a parse tree produced by {@link CoffeeScriptParserGrammar#parenthetical}.
 	 * @param ctx the parse tree
@@ -227,7 +209,6 @@ public interface CoffeeScriptParserGrammarListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitParenthetical(@NotNull CoffeeScriptParserGrammar.ParentheticalContext ctx);
-
 	/**
 	 * Enter a parse tree produced by {@link CoffeeScriptParserGrammar#assignable}.
 	 * @param ctx the parse tree
@@ -238,7 +219,6 @@ public interface CoffeeScriptParserGrammarListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitAssignable(@NotNull CoffeeScriptParserGrammar.AssignableContext ctx);
-
 	/**
 	 * Enter a parse tree produced by {@link CoffeeScriptParserGrammar#index}.
 	 * @param ctx the parse tree
@@ -249,7 +229,6 @@ public interface CoffeeScriptParserGrammarListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitIndex(@NotNull CoffeeScriptParserGrammar.IndexContext ctx);
-
 	/**
 	 * Enter a parse tree produced by {@link CoffeeScriptParserGrammar#unaryOperation}.
 	 * @param ctx the parse tree
@@ -260,7 +239,6 @@ public interface CoffeeScriptParserGrammarListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitUnaryOperation(@NotNull CoffeeScriptParserGrammar.UnaryOperationContext ctx);
-
 	/**
 	 * Enter a parse tree produced by {@link CoffeeScriptParserGrammar#tryRule}.
 	 * @param ctx the parse tree
@@ -271,7 +249,6 @@ public interface CoffeeScriptParserGrammarListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitTryRule(@NotNull CoffeeScriptParserGrammar.TryRuleContext ctx);
-
 	/**
 	 * Enter a parse tree produced by {@link CoffeeScriptParserGrammar#literalTokens}.
 	 * @param ctx the parse tree
@@ -282,7 +259,6 @@ public interface CoffeeScriptParserGrammarListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitLiteralTokens(@NotNull CoffeeScriptParserGrammar.LiteralTokensContext ctx);
-
 	/**
 	 * Enter a parse tree produced by {@link CoffeeScriptParserGrammar#doubleSignOperation}.
 	 * @param ctx the parse tree
@@ -293,7 +269,6 @@ public interface CoffeeScriptParserGrammarListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitDoubleSignOperation(@NotNull CoffeeScriptParserGrammar.DoubleSignOperationContext ctx);
-
 	/**
 	 * Enter a parse tree produced by {@link CoffeeScriptParserGrammar#indexValue}.
 	 * @param ctx the parse tree
@@ -304,7 +279,6 @@ public interface CoffeeScriptParserGrammarListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitIndexValue(@NotNull CoffeeScriptParserGrammar.IndexValueContext ctx);
-
 	/**
 	 * Enter a parse tree produced by {@link CoffeeScriptParserGrammar#code}.
 	 * @param ctx the parse tree
@@ -315,7 +289,6 @@ public interface CoffeeScriptParserGrammarListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitCode(@NotNull CoffeeScriptParserGrammar.CodeContext ctx);
-
 	/**
 	 * Enter a parse tree produced by {@link CoffeeScriptParserGrammar#forVariables}.
 	 * @param ctx the parse tree
@@ -326,7 +299,6 @@ public interface CoffeeScriptParserGrammarListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitForVariables(@NotNull CoffeeScriptParserGrammar.ForVariablesContext ctx);
-
 	/**
 	 * Enter a parse tree produced by {@link CoffeeScriptParserGrammar#objAssignable}.
 	 * @param ctx the parse tree
@@ -337,7 +309,6 @@ public interface CoffeeScriptParserGrammarListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitObjAssignable(@NotNull CoffeeScriptParserGrammar.ObjAssignableContext ctx);
-
 	/**
 	 * Enter a parse tree produced by {@link CoffeeScriptParserGrammar#statement}.
 	 * @param ctx the parse tree
@@ -348,7 +319,6 @@ public interface CoffeeScriptParserGrammarListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitStatement(@NotNull CoffeeScriptParserGrammar.StatementContext ctx);
-
 	/**
 	 * Enter a parse tree produced by {@link CoffeeScriptParserGrammar#simpleArgs}.
 	 * @param ctx the parse tree
@@ -359,7 +329,6 @@ public interface CoffeeScriptParserGrammarListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitSimpleArgs(@NotNull CoffeeScriptParserGrammar.SimpleArgsContext ctx);
-
 	/**
 	 * Enter a parse tree produced by {@link CoffeeScriptParserGrammar#comment}.
 	 * @param ctx the parse tree
@@ -370,7 +339,6 @@ public interface CoffeeScriptParserGrammarListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitComment(@NotNull CoffeeScriptParserGrammar.CommentContext ctx);
-
 	/**
 	 * Enter a parse tree produced by {@link CoffeeScriptParserGrammar#identifier}.
 	 * @param ctx the parse tree
@@ -381,7 +349,6 @@ public interface CoffeeScriptParserGrammarListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitIdentifier(@NotNull CoffeeScriptParserGrammar.IdentifierContext ctx);
-
 	/**
 	 * Enter a parse tree produced by {@link CoffeeScriptParserGrammar#array}.
 	 * @param ctx the parse tree
@@ -392,7 +359,6 @@ public interface CoffeeScriptParserGrammarListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitArray(@NotNull CoffeeScriptParserGrammar.ArrayContext ctx);
-
 	/**
 	 * Enter a parse tree produced by {@link CoffeeScriptParserGrammar#forBody}.
 	 * @param ctx the parse tree
@@ -403,7 +369,6 @@ public interface CoffeeScriptParserGrammarListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitForBody(@NotNull CoffeeScriptParserGrammar.ForBodyContext ctx);
-
 	/**
 	 * Enter a parse tree produced by {@link CoffeeScriptParserGrammar#alphaNumeric}.
 	 * @param ctx the parse tree
@@ -414,7 +379,6 @@ public interface CoffeeScriptParserGrammarListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitAlphaNumeric(@NotNull CoffeeScriptParserGrammar.AlphaNumericContext ctx);
-
 	/**
 	 * Enter a parse tree produced by {@link CoffeeScriptParserGrammar#range}.
 	 * @param ctx the parse tree
@@ -425,7 +389,6 @@ public interface CoffeeScriptParserGrammarListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitRange(@NotNull CoffeeScriptParserGrammar.RangeContext ctx);
-
 	/**
 	 * Enter a parse tree produced by {@link CoffeeScriptParserGrammar#param}.
 	 * @param ctx the parse tree
@@ -436,7 +399,6 @@ public interface CoffeeScriptParserGrammarListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitParam(@NotNull CoffeeScriptParserGrammar.ParamContext ctx);
-
 	/**
 	 * Enter a parse tree produced by {@link CoffeeScriptParserGrammar#funcGlyph}.
 	 * @param ctx the parse tree
@@ -447,7 +409,6 @@ public interface CoffeeScriptParserGrammarListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitFuncGlyph(@NotNull CoffeeScriptParserGrammar.FuncGlyphContext ctx);
-
 	/**
 	 * Enter a parse tree produced by {@link CoffeeScriptParserGrammar#rangeDots}.
 	 * @param ctx the parse tree
@@ -458,7 +419,6 @@ public interface CoffeeScriptParserGrammarListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitRangeDots(@NotNull CoffeeScriptParserGrammar.RangeDotsContext ctx);
-
 	/**
 	 * Enter a parse tree produced by {@link CoffeeScriptParserGrammar#line}.
 	 * @param ctx the parse tree
@@ -469,7 +429,6 @@ public interface CoffeeScriptParserGrammarListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitLine(@NotNull CoffeeScriptParserGrammar.LineContext ctx);
-
 	/**
 	 * Enter a parse tree produced by {@link CoffeeScriptParserGrammar#block}.
 	 * @param ctx the parse tree
@@ -480,7 +439,6 @@ public interface CoffeeScriptParserGrammarListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitBlock(@NotNull CoffeeScriptParserGrammar.BlockContext ctx);
-
 	/**
 	 * Enter a parse tree produced by {@link CoffeeScriptParserGrammar#object}.
 	 * @param ctx the parse tree
@@ -491,7 +449,6 @@ public interface CoffeeScriptParserGrammarListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitObject(@NotNull CoffeeScriptParserGrammar.ObjectContext ctx);
-
 	/**
 	 * Enter a parse tree produced by {@link CoffeeScriptParserGrammar#classRule}.
 	 * @param ctx the parse tree
@@ -502,7 +459,6 @@ public interface CoffeeScriptParserGrammarListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitClassRule(@NotNull CoffeeScriptParserGrammar.ClassRuleContext ctx);
-
 	/**
 	 * Enter a parse tree produced by {@link CoffeeScriptParserGrammar#whileSource}.
 	 * @param ctx the parse tree
@@ -513,7 +469,6 @@ public interface CoffeeScriptParserGrammarListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitWhileSource(@NotNull CoffeeScriptParserGrammar.WhileSourceContext ctx);
-
 	/**
 	 * Enter a parse tree produced by {@link CoffeeScriptParserGrammar#loop}.
 	 * @param ctx the parse tree
@@ -524,7 +479,6 @@ public interface CoffeeScriptParserGrammarListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitLoop(@NotNull CoffeeScriptParserGrammar.LoopContext ctx);
-
 	/**
 	 * Enter a parse tree produced by {@link CoffeeScriptParserGrammar#operationRest}.
 	 * @param ctx the parse tree
@@ -535,7 +489,6 @@ public interface CoffeeScriptParserGrammarListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitOperationRest(@NotNull CoffeeScriptParserGrammar.OperationRestContext ctx);
-
 	/**
 	 * Enter a parse tree produced by {@link CoffeeScriptParserGrammar#switchRule}.
 	 * @param ctx the parse tree
@@ -546,7 +499,6 @@ public interface CoffeeScriptParserGrammarListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitSwitchRule(@NotNull CoffeeScriptParserGrammar.SwitchRuleContext ctx);
-
 	/**
 	 * Enter a parse tree produced by {@link CoffeeScriptParserGrammar#returnRule}.
 	 * @param ctx the parse tree
@@ -557,7 +509,6 @@ public interface CoffeeScriptParserGrammarListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitReturnRule(@NotNull CoffeeScriptParserGrammar.ReturnRuleContext ctx);
-
 	/**
 	 * Enter a parse tree produced by {@link CoffeeScriptParserGrammar#ifBlock}.
 	 * @param ctx the parse tree
@@ -568,7 +519,6 @@ public interface CoffeeScriptParserGrammarListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitIfBlock(@NotNull CoffeeScriptParserGrammar.IfBlockContext ctx);
-
 	/**
 	 * Enter a parse tree produced by {@link CoffeeScriptParserGrammar#thisRule}.
 	 * @param ctx the parse tree
@@ -579,7 +529,6 @@ public interface CoffeeScriptParserGrammarListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitThisRule(@NotNull CoffeeScriptParserGrammar.ThisRuleContext ctx);
-
 	/**
 	 * Enter a parse tree produced by {@link CoffeeScriptParserGrammar#forSource}.
 	 * @param ctx the parse tree
@@ -590,7 +539,6 @@ public interface CoffeeScriptParserGrammarListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitForSource(@NotNull CoffeeScriptParserGrammar.ForSourceContext ctx);
-
 	/**
 	 * Enter a parse tree produced by {@link CoffeeScriptParserGrammar#arguments}.
 	 * @param ctx the parse tree
@@ -601,7 +549,6 @@ public interface CoffeeScriptParserGrammarListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitArguments(@NotNull CoffeeScriptParserGrammar.ArgumentsContext ctx);
-
 	/**
 	 * Enter a parse tree produced by {@link CoffeeScriptParserGrammar#accessor}.
 	 * @param ctx the parse tree
@@ -612,7 +559,6 @@ public interface CoffeeScriptParserGrammarListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitAccessor(@NotNull CoffeeScriptParserGrammar.AccessorContext ctx);
-
 	/**
 	 * Enter a parse tree produced by {@link CoffeeScriptParserGrammar#commonAssignable}.
 	 * @param ctx the parse tree
@@ -623,7 +569,6 @@ public interface CoffeeScriptParserGrammarListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitCommonAssignable(@NotNull CoffeeScriptParserGrammar.CommonAssignableContext ctx);
-
 	/**
 	 * Enter a parse tree produced by {@link CoffeeScriptParserGrammar#slice}.
 	 * @param ctx the parse tree
@@ -634,7 +579,6 @@ public interface CoffeeScriptParserGrammarListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitSlice(@NotNull CoffeeScriptParserGrammar.SliceContext ctx);
-
 	/**
 	 * Enter a parse tree produced by {@link CoffeeScriptParserGrammar#forStart}.
 	 * @param ctx the parse tree
@@ -645,7 +589,6 @@ public interface CoffeeScriptParserGrammarListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitForStart(@NotNull CoffeeScriptParserGrammar.ForStartContext ctx);
-
 	/**
 	 * Enter a parse tree produced by {@link CoffeeScriptParserGrammar#assignObj}.
 	 * @param ctx the parse tree
@@ -656,7 +599,6 @@ public interface CoffeeScriptParserGrammarListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitAssignObj(@NotNull CoffeeScriptParserGrammar.AssignObjContext ctx);
-
 	/**
 	 * Enter a parse tree produced by {@link CoffeeScriptParserGrammar#assignList}.
 	 * @param ctx the parse tree
@@ -667,7 +609,6 @@ public interface CoffeeScriptParserGrammarListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitAssignList(@NotNull CoffeeScriptParserGrammar.AssignListContext ctx);
-
 	/**
 	 * Enter a parse tree produced by {@link CoffeeScriptParserGrammar#literal}.
 	 * @param ctx the parse tree
