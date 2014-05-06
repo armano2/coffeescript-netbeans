@@ -25,7 +25,7 @@ public enum CoffeeScriptStringTokenId implements TokenId {
     STRING("string"),
     EMBEDDED("embedded");
     //
-    private String category;
+    private final String category;
 
     private CoffeeScriptStringTokenId(String category) {
         this.category = category;

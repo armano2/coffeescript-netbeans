@@ -13,7 +13,6 @@
 // limitations under the License.
 package coffeescript.nb.core.embedding;
 
-import coffeescript.nb.core.CoffeeScriptLanguage;
 import coffeescript.nb.core.Constants;
 import java.util.ArrayList;
 import java.util.Collection;
