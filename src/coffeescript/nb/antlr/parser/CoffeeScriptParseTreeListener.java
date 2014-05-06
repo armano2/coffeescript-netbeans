@@ -1,13 +1,26 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+// Copyright 2014 Miloš Pensimus
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 package coffeescript.nb.antlr.parser;
 
+import coffeescript.nb.antlr.parser.generated.CoffeeScriptParserGrammarBaseListener;
+import coffeescript.nb.antlr.parser.generated.CoffeeScriptParserGrammar;
 import coffeescript.nb.antlr.parser.definitions.Definition;
 import coffeescript.nb.antlr.parser.definitions.ClassDefinition;
 import coffeescript.nb.antlr.parser.definitions.MethodDefinition;
 import coffeescript.nb.antlr.parser.definitions.VariableDefinition;
+import coffeescript.nb.parser.ErrorDefinition;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -15,13 +28,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
+import javax.swing.text.BadLocationException;
 import javax.swing.text.StyledDocument;
 import org.antlr.v4.runtime.Token;
+import org.netbeans.editor.BaseDocument;
+import org.netbeans.editor.Utilities;
 import org.openide.text.NbDocument;
+import org.openide.util.Exceptions;
 
 /**
  *
- * @author milos
+ * @author Miloš Pensimus
  */
 public class CoffeeScriptParseTreeListener extends CoffeeScriptParserGrammarBaseListener {
     
@@ -32,9 +49,11 @@ public class CoffeeScriptParseTreeListener extends CoffeeScriptParserGrammarBase
     private final List<ClassDefinition> rootClasses;
     private final List<MethodDefinition> rootMethods;
     private final List<VariableDefinition> rootVariables;
-    private final Stack<ClassDefinition> classStack;    
+    private final Stack<ClassDefinition> classStack; 
+    private final List<ErrorDefinition> errors;
     private boolean newDefinitionsInArray;
     private boolean objectAssign;
+    private int anonymousCounter;
     
     public CoffeeScriptParseTreeListener(StyledDocument doc) {
         this.doc = doc;
@@ -45,11 +64,12 @@ public class CoffeeScriptParseTreeListener extends CoffeeScriptParserGrammarBase
         this.rootClasses = new ArrayList<ClassDefinition>();        
         this.rootMethods = new ArrayList<MethodDefinition>(); 
         this.rootVariables = new ArrayList<VariableDefinition>(); 
+        this.errors = new ArrayList<ErrorDefinition>();
     }
 
     @Override
     public void enterRoot(CoffeeScriptParserGrammar.RootContext ctx) {              
-        stack.push(new Block(getAbsoluteOffset(ctx.start), getAbsoluteOffset(ctx.stop), BlockType.ROOT));
+        stack.push(new Block(getAbsoluteOffset(ctx.start), getBlockEnd(ctx.stop), BlockType.ROOT));
         super.enterRoot(ctx);
     }
     
@@ -61,9 +81,9 @@ public class CoffeeScriptParseTreeListener extends CoffeeScriptParserGrammarBase
     @Override
     public void enterBlock(CoffeeScriptParserGrammar.BlockContext ctx) {
         if(ctx.getParent() instanceof CoffeeScriptParserGrammar.ClassRuleContext) {            
-            stack.push(new Block(getAbsoluteOffset(ctx.start), getAbsoluteOffset(ctx.stop), BlockType.CLASS));
+            stack.push(new Block(getAbsoluteOffset(ctx.start), getBlockEnd(ctx.stop), BlockType.CLASS));
         } else if(ctx.getParent() instanceof CoffeeScriptParserGrammar.CodeContext) {
-            stack.push(new Block(getAbsoluteOffset(ctx.start), getAbsoluteOffset(ctx.stop), BlockType.METHOD));
+            stack.push(new Block(getAbsoluteOffset(ctx.start), getBlockEnd(ctx.stop), BlockType.METHOD));
         }       
         super.enterBlock(ctx);
     }
@@ -94,6 +114,7 @@ public class CoffeeScriptParseTreeListener extends CoffeeScriptParserGrammarBase
                 }  
             }    
         } else if(ctx.getParent().getParent() instanceof CoffeeScriptParserGrammar.AssignObjContext) {
+            classMember = true;
             CoffeeScriptParserGrammar.AssignObjContext assign = (CoffeeScriptParserGrammar.AssignObjContext) ctx.getParent().getParent();
             if (assign.objAssignable().identifier() != null) {                
                 t = assign.objAssignable().identifier().IDENTIFIER().getSymbol();
@@ -104,7 +125,6 @@ public class CoffeeScriptParseTreeListener extends CoffeeScriptParserGrammarBase
                 t = assign.objAssignable().thisProperty().identifier().IDENTIFIER().getSymbol();
                 startOffset = getAbsoluteOffset(t);
                 endOffset = startOffset + t.getText().length();
-                classMember = true;
             }
         } else {
             startOffset = getAbsoluteOffset(ctx.start);
@@ -148,10 +168,6 @@ public class CoffeeScriptParseTreeListener extends CoffeeScriptParserGrammarBase
 
         super.enterAssign(ctx);
     }
-    
-//    private List<Token> handleCommonAssignable(CoffeeScriptParserGrammar.CommonAssignableContext ctx) {
-//        return null
-//    }
 
     @Override
     public void exitCommonAssignable(CoffeeScriptParserGrammar.CommonAssignableContext ctx) {
@@ -180,7 +196,7 @@ public class CoffeeScriptParseTreeListener extends CoffeeScriptParserGrammarBase
     private void getMethodParams(CoffeeScriptParserGrammar.CodeContext ctx, List<Definition> params) {
         CoffeeScriptParserGrammar.ParamListContext paramListCtx = ctx.paramList(); 
         Token t = null;
-        stack.push(new Block(getAbsoluteOffset(ctx.block().start), getAbsoluteOffset(ctx.block().stop), BlockType.METHOD));
+        stack.push(new Block(getAbsoluteOffset(ctx.start), getBlockEnd(ctx.stop), BlockType.METHOD));
         while (paramListCtx != null) {              
             if (paramListCtx.param() != null) {
                 if(paramListCtx.param().commonAssignable() != null) {
@@ -191,12 +207,11 @@ public class CoffeeScriptParseTreeListener extends CoffeeScriptParserGrammarBase
                     }
                     if(paramListCtx.param().commonAssignable().thisProperty() != null)  {
                         t = paramListCtx.param().commonAssignable().thisProperty().identifier().IDENTIFIER().getSymbol();
-                        def = getClassVariable(t, paramListCtx.param().TRIPLE_DOT_TOK() != null, true, false);
+                        def = getClassVariable(t, paramListCtx.param().TRIPLE_DOT_TOK() != null, false, false);
                         addVariable(def);
                     }
                     if(def != null) {
-                        params.add(def);
-                        
+                        params.add(def);                        
                     }
                 }
             }
@@ -229,11 +244,9 @@ public class CoffeeScriptParseTreeListener extends CoffeeScriptParserGrammarBase
                 t = objAssCtx.thisProperty().identifier().IDENTIFIER().getSymbol();
             }
             if(ctx.expression() != null)
-                handleExpression(ctx.expression(), t, objAssCtx.thisProperty() != null);
+                handleExpression(ctx.expression(), t, true);
             else {
-                VariableDefinition def = (objAssCtx.thisProperty() != null) ?
-                        getClassVariable(t, false, false, inMethodBlock()) :
-                        getVariable(t, false, false, inMethodBlock());
+                VariableDefinition def = getClassVariable(t, false, false, inMethodBlock());
                 addVariable(def);
             }
                 
@@ -300,9 +313,11 @@ public class CoffeeScriptParseTreeListener extends CoffeeScriptParserGrammarBase
                 }
             }
         }
-        ClassDefinition classDefinition = getClass(className, ctx.start, ctx.stop, parentName);
-        classStack.push(classDefinition);
-        addClass(classDefinition);
+        if(className != null) {
+            ClassDefinition classDefinition = getClass(className, ctx.start, ctx.stop, parentName);
+            classStack.push(classDefinition);
+            addClass(classDefinition);
+        }
         super.enterClassRule(ctx);
     }
 
@@ -329,7 +344,7 @@ public class CoffeeScriptParseTreeListener extends CoffeeScriptParserGrammarBase
     
     private void handleExpression(CoffeeScriptParserGrammar.ExpressionContext ctx, Token t, boolean thisVariable) {
         if(t == null) return;
-        if (ctx.value() != null || ctx.invocation() != null || ctx.assign() != null) {
+        if (ctx.classRule() == null && ctx.code() == null) {
             VariableDefinition def = (thisVariable) ? getClassVariable(t, false, false, inMethodBlock()) :
                     getVariable(t, false, false, inMethodBlock());
             addVariable(def);
@@ -342,8 +357,6 @@ public class CoffeeScriptParseTreeListener extends CoffeeScriptParserGrammarBase
             addClassVariable(def);
         } else if(inRootBlock() || inMethodBlock()) {
             if(!isFieldDefined(def)) this.stack.peek().addField(def);
-        } else if(inClassBlock()) {
-            classStack.peek().addField(def);
         }
     }
     
@@ -353,12 +366,6 @@ public class CoffeeScriptParseTreeListener extends CoffeeScriptParserGrammarBase
             addClassMethod(def);
         } else if(inRootBlock() || inMethodBlock()) {
             if(!isMethodDefined(def)) this.stack.peek().addMethod(def);
-        } else if(inClassBlock()) {
-            if(def.getText().equals("constructor")) {
-                classStack.peek().addConstructor(def);
-            } else {
-                classStack.peek().addMethod(def);
-            }
         }
     }
 
@@ -382,7 +389,7 @@ public class CoffeeScriptParseTreeListener extends CoffeeScriptParserGrammarBase
         for (Block block : this.stack) {
             contains |= block.containsMethod(def);
         }
-        return contains;
+        return !def.isAnonymous() && contains;
     }
     
     private boolean inRootBlock() {
@@ -399,8 +406,35 @@ public class CoffeeScriptParseTreeListener extends CoffeeScriptParserGrammarBase
     
     private int getAbsoluteOffset(Token token) {
         if(token == null) return 0;
-        return NbDocument.findLineOffset(doc, token.getLine()) + token.getCharPositionInLine();
+        int line = token.getLine();
+        int lineCount = Utilities.getRowCount((BaseDocument)doc);
+        if(lineCount < line + 1) {
+            errors.add(new ErrorDefinition(lineCount, 0, "Line index out of bounds."));
+            line = lineCount;
+        }
+        return NbDocument.findLineOffset(doc, line) + token.getCharPositionInLine();
+    }  
+    
+    private int getBlockEnd(Token token) {
+        BaseDocument document = (BaseDocument) doc;
+        int offset = getAbsoluteOffset(token);
+        try {       
+            int end = Utilities.getFirstNonWhiteFwd(document, offset);
+            return (end > -1) ? end : getLastCharacterOffset();
+        } catch (BadLocationException ex) {
+            Exceptions.printStackTrace(ex);
+        } catch (IndexOutOfBoundsException ex) {   
+            Exceptions.printStackTrace(ex);
+        }
+        // ignore exceptions - if bad location exception - accept absolute token offset
+        return offset;
     }    
+    
+    private int getLastCharacterOffset() throws BadLocationException {
+        BaseDocument document = (BaseDocument) doc;
+        int lastLineOffset = NbDocument.findLineOffset(doc,Utilities.getRowCount(document)-1);
+        return Utilities.getRowEnd(document, lastLineOffset);
+    }
     
     private VariableDefinition getVariable(Token t, boolean splat, boolean methodParam, boolean protectedField) {
         if(t == null) return null;
@@ -423,7 +457,7 @@ public class CoffeeScriptParseTreeListener extends CoffeeScriptParserGrammarBase
     
     private ClassDefinition getClass(String className, Token startToken, Token stopToken, String parentName) {
         int start = getAbsoluteOffset(startToken);
-        int end = getAbsoluteOffset(stopToken);
+        int end = getBlockEnd(stopToken);
         int blockStart = this.stack.peek().getStartOffset();
         int blockEnd = this.stack.peek().getEndOffset();
         return new ClassDefinition(className, start, end, blockStart, blockEnd, parentName);      
@@ -432,8 +466,15 @@ public class CoffeeScriptParseTreeListener extends CoffeeScriptParserGrammarBase
     private MethodDefinition getMethod(Token t, int startOffset, int endOffset, List<Definition> params) {
         int blockStart = this.stack.peek().getStartOffset();
         int blockEnd = this.stack.peek().getEndOffset();
-        String text = (t != null) ? t.getText() : null;
-        return new MethodDefinition(text, startOffset, endOffset, blockStart, blockEnd, false, params, t == null); 
+        boolean anonymous = false;  
+        String text;
+        if(t == null) {
+            anonymous = true;
+            text = "anonymous" + anonymousCounter++;
+        } else {
+            text = t.getText();
+        }
+        return new MethodDefinition(text, startOffset, endOffset, blockStart, blockEnd, false, params, anonymous); 
     }  
     
     private MethodDefinition getClassMethod(Token t, int startOffset, int endOffset, List<Definition> params) {
@@ -443,6 +484,8 @@ public class CoffeeScriptParseTreeListener extends CoffeeScriptParserGrammarBase
         String text = (t != null) ? t.getText() : null;
         return new MethodDefinition(text, startOffset, endOffset, blockStart, blockEnd, true, params, t == null); 
     } 
+
+
     
     private void addRootDefinitions(Block block) {
         rootClasses.addAll(block.getClasses());
@@ -475,12 +518,22 @@ public class CoffeeScriptParseTreeListener extends CoffeeScriptParserGrammarBase
         return rootClasses;
     }
 
+    public List<ErrorDefinition> getErrors() {
+        return errors;
+    }
+    
     private void addClassVariable(VariableDefinition def) {
         if(!classStack.isEmpty()) classStack.peek().addField(def);
     }
     
     private void addClassMethod(MethodDefinition def) {
-        if(!classStack.isEmpty()) classStack.peek().addMethod(def);
+        if(!classStack.isEmpty()) {
+            if(def.getText().equals("constructor")) {
+                classStack.peek().addConstructor(def);
+            } else {
+                classStack.peek().addMethod(def);
+            }
+        }
     }
     
     private enum BlockType {
