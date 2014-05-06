@@ -1,19 +1,26 @@
-/*
- * Copyright(c) Zdenek Tronicek, FIT CTU in Prague. All rights reserved.
- *
- * The contents of this file are subject to the terms of the Common Development
- * and Distribution License (CDDL). You may not use this file except in
- * compliance with the CDDL. You can obtain a copy of the CDDL at
- * http://www.netbeans.org/cddl.html.
- *
- */
+// Copyright 2014 Miloš Pensimus
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 package coffeescript.nb.indexing;
 
 import coffeescript.nb.antlr.parser.definitions.ClassDefinition;
 import coffeescript.nb.antlr.parser.definitions.Definition;
 import coffeescript.nb.antlr.parser.definitions.MethodDefinition;
 import coffeescript.nb.antlr.parser.definitions.VariableDefinition;
+import coffeescript.nb.core.CoffeeScriptUtils;
 import coffeescript.nb.core.Constants;
+import coffeescript.nb.options.CoffeeScriptSettings;
 import coffeescript.nb.parser.ParsingResult;
 import java.io.IOException;
 import java.util.logging.Level;
@@ -30,46 +37,55 @@ import org.openide.util.Exceptions;
 
 /**
  *
- * @author Denis Stepanov
+ * @author Miloš Pensimus
  */
 public class CoffeeScriptIndexer extends EmbeddingIndexer {
 
     private static final Logger LOGGER = Logger.getLogger(CoffeeScriptIndexer.class.getSimpleName());
-    private static final boolean LOG = LOGGER.isLoggable(Level.FINE);
 
     @Override
     protected void index(Indexable indexable, Result parserResult, Context context) {
+        if(isParserResultValid(parserResult)) storeItems(indexable, parserResult, context);
+    }
+    
+    private void storeItems(Indexable indexable, Result parserResult, Context context) {
+        
         try {
             IndexingSupport support = IndexingSupport.getInstance(context);
             IndexDocument document = support.createDocument(indexable);
             ParsingResult result = (ParsingResult) parserResult;
-            
-            for(VariableDefinition def : result.getGd().getFields())  {
+
+            for(VariableDefinition def : result.getFileDefinition().getFields())  {
                 document.addPair(CoffeeScriptIndex.FIELD_KEY, def.serialize(), true, true);
             }
             
-            for(VariableDefinition def : result.getGd().getRootFields())  {
+            for(VariableDefinition def : result.getFileDefinition().getRootFields())  {
                 document.addPair(CoffeeScriptIndex.ROOT_FIELD_KEY, def.serialize(), true, true);
             }
             
-            for(MethodDefinition def : result.getGd().getMethods())  {
+            for(MethodDefinition def : result.getFileDefinition().getMethods())  {
                 document.addPair(CoffeeScriptIndex.METHOD_KEY, def.serialize(), true, true);
                 for(Definition param: def.getParams()) {
                     document.addPair(CoffeeScriptIndex.METHOD_PARAM_KEY, param.serialize(), true, true);
                 }
             }            
             
-            for(MethodDefinition def : result.getGd().getRootMethods()) {
+            for(MethodDefinition def : result.getFileDefinition().getRootMethods()) {
                 document.addPair(CoffeeScriptIndex.ROOT_METHOD_KEY, def.serialize(), true, true);
                 for(Definition param: def.getParams()) {
                     document.addPair(CoffeeScriptIndex.METHOD_PARAM_KEY, param.serialize(), true, true);
                 }
             }
             
-            for(ClassDefinition def : result.getGd().getRootClasses()) {
+            for(ClassDefinition def : result.getFileDefinition().getRootClasses()) {
                 document.addPair(CoffeeScriptIndex.ROOT_CLASS_KEY, def.serialize(), true, true);
                 for(MethodDefinition method: def.getMethods()) {
                     document.addPair(CoffeeScriptIndex.CLASS_METHOD_KEY, method.serialize(), true, true);
+                    for(Definition param: method.getParams()) {
+                        document.addPair(CoffeeScriptIndex.METHOD_PARAM_KEY, param.serialize(), true, true);
+                    }
+                }
+                for(MethodDefinition method: def.getConstructors()) {
                     for(Definition param: method.getParams()) {
                         document.addPair(CoffeeScriptIndex.METHOD_PARAM_KEY, param.serialize(), true, true);
                     }
@@ -84,12 +100,23 @@ public class CoffeeScriptIndexer extends EmbeddingIndexer {
         } catch (IOException ex) {
             Exceptions.printStackTrace(ex);
         }
+        
+    }
+    
+    private boolean isParserResultValid(Result result) {
+        ParsingResult parsingResult = (ParsingResult) result;
+        if(!CoffeeScriptSettings.get().isLegacy() && parsingResult.isLegacy()) {
+            CoffeeScriptUtils.reindexFile(result.getSnapshot().getSource().getFileObject());
+            return false;
+        }
+        
+        return !parsingResult.hasErrors();
     }
 
     public static class Factory extends EmbeddingIndexerFactory {
 
-        static final String NAME = "CoffeeScript"; //NOI18N
-        static final int VERSION = 1;
+        public static final String NAME = "CoffeeScript"; //NOI18N
+        static final int VERSION = 4;
 
         @Override
         public EmbeddingIndexer createIndexer(Indexable indexable, Snapshot snapshot) {
@@ -98,12 +125,7 @@ public class CoffeeScriptIndexer extends EmbeddingIndexer {
             } else {
                 return null;
             }
-        }
-
-        @Override
-        public boolean scanStarted(Context context) {
-            return super.scanStarted(context); //To change body of generated methods, choose Tools | Templates.
-        }        
+        } 
 
         @Override
         public void filesDeleted(Iterable<? extends Indexable> deleted, Context context) {
@@ -129,6 +151,18 @@ public class CoffeeScriptIndexer extends EmbeddingIndexer {
             }
         }
 
+        @Override
+        public void scanFinished(Context context) {
+            CoffeeScriptUtils.cleanupAntlrATNConfig();
+            super.scanFinished(context);
+        }   
+
+        @Override
+        public boolean scanStarted(Context context) {
+            CoffeeScriptUtils.cleanupAntlrATNConfig();
+            return super.scanStarted(context);
+        }
+        
         @Override
         public String getIndexerName() {
             return NAME;

@@ -1,12 +1,17 @@
-/*
- * Copyright(c) Zdenek Tronicek, FIT CTU in Prague. All rights reserved.
- *
- * The contents of this file are subject to the terms of the Common Development
- * and Distribution License (CDDL). You may not use this file except in
- * compliance with the CDDL. You can obtain a copy of the CDDL at
- * http://www.netbeans.org/cddl.html.
- *
- */
+// Copyright 2014 Miloš Pensimus
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 package coffeescript.nb.indexing;
 
 import coffeescript.nb.antlr.parser.definitions.Definition;
@@ -24,10 +29,11 @@ import org.openide.util.Exceptions;
 
 /**
  *
- * @author Denis Stepanov
+ * @author Miloš Pensimus
  */
 public class CoffeeScriptIndex {
 
+    public static final String FILE_PRESENT_KEY = "FILE_PRESENT_KEY"; //NOI18N
     public static final String CLASS_KEY = "CLASS_KEY"; //NOI18N
     public static final String FIELD_KEY = "FIELD_KEY"; //NOI18N
     public static final String METHOD_KEY = "METHOD_KEY"; //NOI18N
@@ -56,6 +62,10 @@ public class CoffeeScriptIndex {
         this.querySupport = QuerySupport.forRoots(CoffeeScriptIndexer.Factory.NAME, CoffeeScriptIndexer.Factory.VERSION, sourceRoots.toArray(new FileObject[]{}));
     }
 
+    public CoffeeScriptIndex() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
 
     public Collection<Definition> getAllFieldsInFile(FileObject fo) {
         try {
@@ -72,6 +82,14 @@ public class CoffeeScriptIndex {
                         result.add(IndexedDefinitionFactory.create(value, indexResult.getFile()));
                 }
             }
+            
+            for (IndexResult indexResult : filterDeletedFiles(querySupport.query(CLASS_FIELD_KEY, "", QuerySupport.Kind.PREFIX))) {
+                if(indexResult.getFile().equals(fo)) {  
+                    for(String value : indexResult.getValues(CLASS_FIELD_KEY))
+                        result.add(IndexedDefinitionFactory.create(value, indexResult.getFile()));
+                }
+            }
+            
             for (IndexResult indexResult : filterDeletedFiles(querySupport.query(METHOD_PARAM_KEY, "", QuerySupport.Kind.PREFIX))) {
                 if(indexResult.getFile().equals(fo)) {  
                     for(String value : indexResult.getValues(METHOD_PARAM_KEY))
@@ -147,6 +165,13 @@ public class CoffeeScriptIndex {
                 }
             }
             
+            for (IndexResult indexResult : filterDeletedFiles(querySupport.query(CLASS_METHOD_KEY, "", QuerySupport.Kind.PREFIX))) {
+                if(indexResult.getFile().equals(fo)) {  
+                    for(String value : indexResult.getValues(CLASS_METHOD_KEY))
+                        result.add(IndexedDefinitionFactory.create(value, indexResult.getFile()));
+                }
+            }
+            
             for (IndexResult indexResult : filterDeletedFiles(querySupport.query(ROOT_METHOD_KEY, "", QuerySupport.Kind.PREFIX))) {
                 if(indexResult.getFile().equals(fo)) {  
                     for(String value : indexResult.getValues(ROOT_METHOD_KEY))
@@ -160,13 +185,45 @@ public class CoffeeScriptIndex {
             return Collections.emptyList();
         }
     }
+       
+    public Collection<Definition> getAllClassMethods(FileObject fo) {
+        try {
+            Collection<Definition> result = new LinkedList<Definition>();
+            for (IndexResult indexResult : filterDeletedFiles(querySupport.query(CLASS_METHOD_KEY, "", QuerySupport.Kind.PREFIX))) {
+                for(String value : indexResult.getValues(CLASS_METHOD_KEY))
+                    result.add(IndexedDefinitionFactory.create(value, indexResult.getFile()));
+            }
+
+            return result;
+            
+        } catch (IOException ex) {
+            Exceptions.printStackTrace(ex);
+            return Collections.emptyList();
+        }
+    }
+    
+    public Collection<Definition> getAllClassFields(FileObject fo) {
+        try {
+            Collection<Definition> result = new LinkedList<Definition>();
+            for (IndexResult indexResult : filterDeletedFiles(querySupport.query(CLASS_FIELD_KEY, "", QuerySupport.Kind.PREFIX))) {
+                for(String value : indexResult.getValues(CLASS_FIELD_KEY))
+                    result.add(IndexedDefinitionFactory.create(value, indexResult.getFile()));
+            }
+
+            return result;
+            
+        } catch (IOException ex) {
+            Exceptions.printStackTrace(ex);
+            return Collections.emptyList();
+        }
+    }
     
     public Collection<Definition> getAllRootMethodsFromOtherFiles(FileObject fo) {
         try {
             Collection<Definition> result = new LinkedList<Definition>();
-            for (IndexResult indexResult : filterDeletedFiles(querySupport.query(METHOD_KEY, "", QuerySupport.Kind.PREFIX))) {
+            for (IndexResult indexResult : filterDeletedFiles(querySupport.query(CLASS_METHOD_KEY, "", QuerySupport.Kind.PREFIX))) {
                 if(!indexResult.getFile().equals(fo)) {  
-                    for(String value : indexResult.getValues(METHOD_KEY))
+                    for(String value : indexResult.getValues(CLASS_METHOD_KEY))
                         result.add(IndexedDefinitionFactory.create(value, indexResult.getFile()));
                 }
             }
@@ -195,6 +252,12 @@ public class CoffeeScriptIndex {
                 }
                 
             }
+            for (IndexResult indexResult : filterDeletedFiles(querySupport.query(CLASS_FIELD_KEY, "", QuerySupport.Kind.PREFIX))) {
+                if(!indexResult.getFile().equals(fo)) {  
+                    for(String value : indexResult.getValues(CLASS_FIELD_KEY))
+                        result.add(IndexedDefinitionFactory.create(value, indexResult.getFile()));
+                }
+            }
             return result;
             
         } catch (IOException ex) {
@@ -217,6 +280,17 @@ public class CoffeeScriptIndex {
         } catch (IOException ex) {
             Exceptions.printStackTrace(ex);
             return Collections.emptyList();
+        }
+    }
+    
+    public boolean classExists(String name) {
+        try {
+            Collection<IndexResult> result = (Collection<IndexResult>) filterDeletedFiles(querySupport.query(ROOT_CLASS_KEY, 
+                    IndexedDefinitionFactory.CLASS_PREFIX + IndexedDefinitionFactory.CLASS_DELIM + name, QuerySupport.Kind.PREFIX));
+            return !result.isEmpty();            
+        } catch (IOException ex) {
+            Exceptions.printStackTrace(ex);
+            return false;
         }
     }
 

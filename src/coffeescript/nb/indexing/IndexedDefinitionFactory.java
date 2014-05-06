@@ -1,8 +1,16 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+// Copyright 2014 Miloš Pensimus
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
 package coffeescript.nb.indexing;
 
@@ -13,9 +21,7 @@ import coffeescript.nb.antlr.parser.definitions.VariableDefinition;
 import static coffeescript.nb.indexing.IndexedDefinitionFactory.CLASS_DELIM;
 import static coffeescript.nb.indexing.IndexedDefinitionFactory.create;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
-import java.util.StringTokenizer;
 import org.openide.filesystems.FileObject;
 
 /**
@@ -23,12 +29,12 @@ import org.openide.filesystems.FileObject;
  * @author Miloš Pensimus
  */
 public class IndexedDefinitionFactory {
-    public static String FIELD_PREFIX = "F";
-    public static String CLASS_PREFIX = "C";
-    public static String METHOD_PREFIX = "M";
-    public static String FIELD_DELIM = "#";
-    public static String CLASS_DELIM = "|";
-    public static String METHOD_DELIM = ":";
+    public static String FIELD_PREFIX = "F"; //NOI18N
+    public static String CLASS_PREFIX = "C"; //NOI18N
+    public static String METHOD_PREFIX = "M"; //NOI18N
+    public static String FIELD_DELIM = "#"; //NOI18N
+    public static String CLASS_DELIM = "|"; //NOI18N
+    public static String METHOD_DELIM = ":"; //NOI18N
     
     public static Definition create(String value, FileObject fo) {
         if(value.startsWith(FIELD_PREFIX)) return getVariableDefinition(value, fo);
@@ -43,6 +49,7 @@ public class IndexedDefinitionFactory {
         VariableDefinition var = new VariableDefinition(varDef[i++], Integer.valueOf(varDef[i++]), Integer.valueOf(varDef[i++]), Integer.valueOf(varDef[i++]),
                 Integer.valueOf(varDef[i++]), Boolean.valueOf(varDef[i++]), Boolean.valueOf(varDef[i++]), Boolean.valueOf(varDef[i++]), Boolean.valueOf(varDef[i++]));
         var.setFileObject(fo);
+        var.setClassName(varDef[i++]);
         return var;
     }
     
@@ -64,11 +71,14 @@ public class IndexedDefinitionFactory {
         
         List<Definition> params = new ArrayList<Definition>();
         int i = 1;
-        MethodDefinition var = new MethodDefinition(varDef[i++], Integer.valueOf(varDef[i++]), Integer.valueOf(varDef[i++]), Integer.valueOf(varDef[i++]), Integer.valueOf(varDef[i++]), Boolean.valueOf(varDef[i++]), params, Boolean.valueOf(varDef[i++]));
-        for(int j = i; j< varDef.length ; j++) {
-            params.add(create(varDef[j], fo));
+        MethodDefinition var = new MethodDefinition(varDef[i++], Integer.valueOf(varDef[i++]), Integer.valueOf(varDef[i++]), Integer.valueOf(varDef[i++]), 
+                Integer.valueOf(varDef[i++]), Boolean.valueOf(varDef[i++]), params, Boolean.valueOf(varDef[i++]));
+        var.setClassName(varDef[i++]);
+        for(; i < varDef.length ; i++) {
+            params.add(create(varDef[i], fo));
         }       
         var.setFileObject(fo);
+        
         return var;
     }
 }
