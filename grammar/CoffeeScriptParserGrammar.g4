@@ -15,8 +15,8 @@ tokens {
 }
 
 root
-    : body
-    |
+    :
+    | body    
     ;
 
 body
@@ -24,11 +24,14 @@ body
     | body TERMINATOR line
     | body TERMINATOR
     ;
+
  
 line
-    : expression
+    : 
+    | expression
     | statement
     ;
+
 
 statement
     : returnRule
@@ -44,6 +47,8 @@ expression
     //operation rule
     | unaryOperation 
     | doubleSignOperation
+    | simpleAssignable DOUBLE_MINUS_TOK
+    | simpleAssignable DOUBLE_PLUS_TOK
     | expression operationRest
     | simpleAssignableOperation
     // end operation rule
@@ -138,16 +143,17 @@ funcGlyph
     ;
 
 optComma
-    : COMMA_TOK
-    | 
+    : 
+    | COMMA_TOK
     ;
 
 paramList
-    : param 
+    : 
+    |
+    | param 
     | paramList COMMA_TOK param 
     | paramList optComma TERMINATOR param 
     | paramList optComma INDENT paramList optComma OUTDENT
-    |
     ;
 
 param
@@ -156,13 +162,6 @@ param
     | commonAssignable EQUATING_TOK expression 
     | TRIPLE_DOT_TOK
     ;
-
-//paramVar
-//    : identifier
-//    | thisProperty
-//    | array
-//    | object
-//    ;
 
 commonAssignable
     : identifier
@@ -207,7 +206,7 @@ value
     ;
 
 accessor
-    : DOT_TOK  identifier 
+    : DOT_TOK identifier 
     | QUEST_DOT_TOK identifier 
     | DOUBLE_COLON_TOK identifier 
     | QUEST_DOUBLE_COLON_TOK identifier
@@ -230,11 +229,12 @@ object
     ;
 
 assignList
-    : assignObj 
+    : 
+    |
+    | assignObj 
     | assignList COMMA_TOK assignObj
     | assignList optComma TERMINATOR assignObj
     | assignList optComma INDENT assignList optComma OUTDENT
-    |
     ;
 
 classRule
@@ -256,8 +256,9 @@ invocation
     ;
 
 optFuncExist
-    : FUNC_EXIST
+    : 
     |
+    | FUNC_EXIST
     ;
 
 arguments
@@ -358,13 +359,6 @@ forStart
     | FOR OWN forVariables
     ;
 
-//forValue
-//    : identifier
-//    | thisProperty
-//    | array 
-//    | object
-//    ;
-
 forVariables
     : commonAssignable
     | commonAssignable COMMA_TOK commonAssignable 
@@ -416,8 +410,7 @@ doubleSignOperation
     ;
 
 simpleAssignableOperation
-    : simpleAssignable DOUBLE_MINUS_TOK
-    | simpleAssignable DOUBLE_PLUS_TOK
+    : 
     | simpleAssignable COMPOUND_ASSIGN expression
     | simpleAssignable COMPOUND_ASSIGN INDENT expression OUTDENT 
     | simpleAssignable COMPOUND_ASSIGN TERMINATOR expression
