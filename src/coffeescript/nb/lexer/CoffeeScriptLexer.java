@@ -11,6 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+
 package coffeescript.nb.lexer;
 
 import coffeescript.nb.core.CoffeeScriptLexerBase;
@@ -30,13 +31,13 @@ import java.util.Map;
 
 /**
  *
- * @author Denis Stepanov
+ * @author Denis Stepanov & Miloš Pensimus
  */
 public class CoffeeScriptLexer extends CoffeeScriptLexerBase<CoffeeScriptTokenId> {
 
     private final static Set<String> COFFEE_ALIASES = new HashSet<String>(Arrays.asList("and", "or", "is", "isnt", "not", "yes", "no", "on", "off"));
-    private final static Set<TokenEnumLexer> NOT_REGEX = EnumSet.of(NUMBER_LEG, REGEX_LEG, BOOL_LEG, INC_LEG, DEC_LEG, RBRACKET_LEG);
-    private final static Set<TokenEnumLexer> NOT_SPACED_REGEX = EnumSet.of(RPAREN_LEG, RBRACE_LEG, THIS_LEG, IDENTIFIER_LEG, STRING_LEG);
+    private final static Set<TokenEnumLexer> NOT_REGEX = EnumSet.of(NUMBER, REGEX, BOOL, INC, DEC, RBRACKET);
+    private final static Set<TokenEnumLexer> NOT_SPACED_REGEX = EnumSet.of(RPAREN, RBRACE, THIS, IDENTIFIER, STRING);
     private final static Map<String, CoffeeScriptTokenId> TEXTID_TO_TOKEN = new HashMap<String, CoffeeScriptTokenId>();
 
     static {
@@ -45,19 +46,19 @@ public class CoffeeScriptLexer extends CoffeeScriptLexerBase<CoffeeScriptTokenId
                 TEXTID_TO_TOKEN.put(token.fixedText(), getToken(token));
             }
         }
-        for (String jsKeywork : Arrays.asList("true", "false", "null", "this", "new", "delete", "typeof", "in", "instanceof",
+        for (String jsKeywork : Arrays.asList("true", "false", "null", "this", "delete", "typeof", "in", "instanceof",
                 "return", "throw", "break", "continue", "debugger", "if", "else", "switch", "for", "while", "do", "try", "catch", "finally",
-                "class", "extends", "super")) {
-            TEXTID_TO_TOKEN.put(jsKeywork, getToken(ANY_KEYWORD_LEG));
+                "class", "super")) {
+            TEXTID_TO_TOKEN.put(jsKeywork, getToken(ANY_KEYWORD));
         }
         for (String coffeeKeyword : Arrays.asList("undefined", "then", "unless", "until", "loop", "of", "by", "when")) {
-            TEXTID_TO_TOKEN.put(coffeeKeyword, getToken(ANY_KEYWORD_LEG));
+            TEXTID_TO_TOKEN.put(coffeeKeyword, getToken(ANY_KEYWORD));
         }
         for (String coffeeAlias : COFFEE_ALIASES) {
-            TEXTID_TO_TOKEN.put(coffeeAlias, getToken(ANY_KEYWORD_LEG));
+            TEXTID_TO_TOKEN.put(coffeeAlias, getToken(ANY_KEYWORD));
         }
-        TEXTID_TO_TOKEN.put("true", getToken(BOOL_LEG));
-        TEXTID_TO_TOKEN.put("false", getToken(BOOL_LEG));
+        TEXTID_TO_TOKEN.put("true", getToken(BOOL));
+        TEXTID_TO_TOKEN.put("false", getToken(BOOL));
     }
     
     private final static Pattern REGEX_MATCH = Pattern.compile("^\\/(?![\\s=])[^\\/\\n\\\\]*(?:(?:\\\\[\\s\\S]|\\[[^\\]\\n\\\\]*(?:\\\\[\\s\\S][^\\]\\n\\\\]*)*])[^\\/\\n\\\\]*)*\\/[imgy]{0,4}(?!\\w)");
@@ -93,7 +94,7 @@ public class CoffeeScriptLexer extends CoffeeScriptLexerBase<CoffeeScriptTokenId
 
     @Override
     protected org.netbeans.api.lexer.Token<CoffeeScriptTokenId> token(CoffeeScriptTokenId id) {
-        if (id.equals(WHITESPACE_LEG)) {
+        if (id.equals(WHITESPACE)) {
             prevSpaced = true;
         } else {
             prevToken = id;
@@ -101,9 +102,9 @@ public class CoffeeScriptLexer extends CoffeeScriptLexerBase<CoffeeScriptTokenId
         }
 
         switch (id.getTokenEnum()) {
-            case INDENT_LEG:
+            case INDENT:
                 return tokenFactory.createPropertyToken(id, input.readLength(), new IndentTokenProperty(indent));
-            case OUTDENT_LEG:
+            case OUTDENT:
                 return tokenFactory.createPropertyToken(id, input.readLength(), new IndentTokenProperty(indent));
         }
 
@@ -128,14 +129,15 @@ public class CoffeeScriptLexer extends CoffeeScriptLexerBase<CoffeeScriptTokenId
                 if (input.readLength() > 1) {
                     input.backup(1);
                     if (lineAt == -1) {
-                        return token(getToken(WHITESPACE_LEG));
+                        return token(getToken(WHITESPACE));
                     }
                     return indentToken(input.readLength() - lineAt);
                 }
                 break;
             }
         }
-
+        
+        //TODO - octal numbers
         if (isDigit(c) || (c == '.' && isDigit(peek()))) {
 
             StringBuilder buffer = new StringBuilder();
@@ -193,7 +195,7 @@ public class CoffeeScriptLexer extends CoffeeScriptLexerBase<CoffeeScriptTokenId
                         c = input.read();
                     }
                     if (!isDigit(c)) {
-                        return token(getToken(ERROR_LEG));
+                        return token(getToken(ERROR));
                     }
                     do {
                         buffer.append((char) c);
@@ -209,10 +211,10 @@ public class CoffeeScriptLexer extends CoffeeScriptLexerBase<CoffeeScriptTokenId
                 try {
                     Double.valueOf(numString).doubleValue();
                 } catch (NumberFormatException ex) {
-                    return token(getToken(ERROR_LEG));
+                    return token(getToken(ERROR));
                 }
             }
-            return token(getToken(NUMBER_LEG));
+            return token(getToken(NUMBER));
         }
 
         boolean startsWithAt = false;
@@ -236,7 +238,7 @@ public class CoffeeScriptLexer extends CoffeeScriptLexerBase<CoffeeScriptTokenId
             identifierStart = Character.isJavaIdentifierStart((char) c);
         }
         if (startsWithAt && !identifierStart) {
-            return token(getToken(AT_LEG));
+            return token(getToken(AT));
         }
         if (identifierStart) {
             StringBuilder buffer = new StringBuilder();
@@ -262,7 +264,7 @@ public class CoffeeScriptLexer extends CoffeeScriptLexerBase<CoffeeScriptTokenId
                         }
                     }
                     if (escapeVal < 0) {
-                        return token(getToken(ERROR_LEG));
+                        return token(getToken(ERROR));
                     }
                     buffer.append((char) escapeVal);
 
@@ -275,7 +277,7 @@ public class CoffeeScriptLexer extends CoffeeScriptLexerBase<CoffeeScriptTokenId
                             isUnicodeEscapeStart = true;
                             containsEscape = true;
                         } else {
-                            return token(getToken(ERROR_LEG));
+                            return token(getToken(ERROR));
                         }
                     } else {
                         if (c == LexerInput.EOF || !Character.isJavaIdentifierPart((char) c)) {
@@ -289,11 +291,11 @@ public class CoffeeScriptLexer extends CoffeeScriptLexerBase<CoffeeScriptTokenId
             input.backup(1);
 
             if (startsWithAt) {
-                return token(getToken(FIELD_LEG));
+                return token(getToken(FIELD));
             }
 
-            if (EnumSet.of(DOT_LEG, QDOT_LEG, DOUBLE_COLON_LEG).contains(prevToken)) {
-                return token(getToken(IDENTIFIER_LEG));
+            if (EnumSet.of(DOT, QDOT, DOUBLE_COLON).contains(prevToken)) {
+                return token(getToken(IDENTIFIER));
             }
 
             String text = buffer.toString();
@@ -302,42 +304,42 @@ public class CoffeeScriptLexer extends CoffeeScriptLexerBase<CoffeeScriptTokenId
                 if (token != null) {
                     return token(token);
                 }
-                if ("own".equals(text) && prevToken.equals(TokenEnumLexer.FOR_LEG)) {
-                    return token(getToken(ANY_KEYWORD_LEG));
+                if ("own".equals(text) && prevToken.equals(TokenEnumLexer.FOR)) {
+                    return token(getToken(ANY_KEYWORD));
                 }
             }
-            return token(getToken(IDENTIFIER_LEG));
+            return token(getToken(IDENTIFIER));
         }
 
         switch (c) {
             case ';':
-                return token(getToken(SEMI_LEG));
+                return token(getToken(SEMI));
             case '(':
-                return token(getToken(LPAREN_LEG));
+                return token(getToken(LPAREN));
             case ')':
-                return token(getToken(RPAREN_LEG));
+                return token(getToken(RPAREN));
             case '{':
-                return token(getToken(LBRACE_LEG));
+                return token(getToken(LBRACE));
             case '}':
-                return token(getToken(RBRACE_LEG));
+                return token(getToken(RBRACE));
             case '[':
-                return token(getToken(LBRACKET_LEG));
+                return token(getToken(LBRACKET));
             case ']':
-                return token(getToken(RBRACKET_LEG));
+                return token(getToken(RBRACKET));
             case '\\':
-                return token(getToken(ANY_OPERATOR_LEG));
+                return token(getToken(ANY_OPERATOR));
             case '"': {
                 if (inputMatch("\"\"")) {
-                    return balancedInterpolatedString("\"\"\"") ? token(getToken(STRING_LEG)) : token(getToken(ERROR_LEG));
+                    return balancedInterpolatedString("\"\"\"") ? token(getToken(STRING)) : token(getToken(ERROR));
                 } else {
-                    return balancedInterpolatedString("\"") ? token(getToken(STRING_LEG)) : token(getToken(ERROR_LEG));
+                    return balancedInterpolatedString("\"") ? token(getToken(STRING)) : token(getToken(ERROR));
                 }
             }
             case '\'': {
                 if (inputMatch("''")) {
-                    return balancedString("'''") ? token(getToken(SIMPLE_STRING_LEG)) : token(getToken(ERROR_LEG));
+                    return balancedString("'''") ? token(getToken(SIMPLE_STRING)) : token(getToken(ERROR));
                 } else {
-                    return balancedString("'") ? token(getToken(SIMPLE_STRING_LEG)) : token(getToken(ERROR_LEG));
+                    return balancedString("'") ? token(getToken(SIMPLE_STRING)) : token(getToken(ERROR));
                 }
             }
             case '/': {
@@ -352,9 +354,9 @@ public class CoffeeScriptLexer extends CoffeeScriptLexerBase<CoffeeScriptTokenId
                                 break;
                             }
                         }
-                        return token(getToken(HEREGEX_LEG));
+                        return token(getToken(HEREGEX));
                     } else {
-                        return token(getToken(ERROR_LEG));
+                        return token(getToken(ERROR));
                     }
                 } else if (prevToken != null) {
                     Set<TokenEnumLexer> notRegex = prevSpaced ? NOT_REGEX : NOT_SPACED_REGEX;
@@ -370,7 +372,7 @@ public class CoffeeScriptLexer extends CoffeeScriptLexerBase<CoffeeScriptTokenId
                                 }
                             }
                             if (REGEX_MATCH.matcher(input.readText()).matches()) {
-                                return token(getToken(REGEX_LEG));
+                                return token(getToken(REGEX));
                             }
                         }
                         input.backup(input.readLength() - 1);
@@ -378,57 +380,66 @@ public class CoffeeScriptLexer extends CoffeeScriptLexerBase<CoffeeScriptTokenId
 
                 }
                 if (inputMatch('=')) {
-                    return token(getToken(ANY_OPERATOR_LEG));
+                    return token(getToken(ANY_OPERATOR));
                 }
-                return token(getToken(DIV_LEG));
+                return token(getToken(DIV));
             }
             case '#': {
                 if (inputNotMatch("###") && inputMatch("##")) {
-                    return balancedString("###") ? token(getToken(COMMENT_LEG)) : token(getToken(ERROR_LEG));
+                    return balancedString("###") ? token(getToken(COMMENT)) : token(getToken(ERROR));
                 } else {
                     while (true) {
                         c = input.read();
                         if (c == '\n') {
                             input.backup(1);
-                            return token(getToken(COMMENT_LEG));
+                            return token(getToken(COMMENT));
                         }
                         if (c == LexerInput.EOF) {
-                            return token(getToken(COMMENT_LEG));
+                            return token(getToken(COMMENT));
                         }
                     }
                 }
             }
             case '`': {
-                return balancedJSToken() ? token(getToken(JSTOKEN_LEG)) : token(getToken(ERROR_LEG));
+                return balancedJSToken() ? token(getToken(JSTOKEN)) : token(getToken(ERROR));
             }
             case '.': {
-                return token(getToken(DOT_LEG));
+                return token(getToken(DOT));
             }
             case '?': {
-                return inputMatch('.') ? token(getToken(QDOT_LEG)) : token(getToken(QM_LEG));
+                if(inputMatch('.')) return token(getToken(QDOT));
+                c = input.read();
+                if(c == ':') {
+                    c = input.read();
+                    if(c == ':') return token(getToken(QDOUBLE_COLON));
+                    else input.backup(2);
+                } else {
+                    input.backup(1);
+                }
+                return token(getToken(QM));
             }
             case ':': {
-                return inputMatch(':') ? token(getToken(DOUBLE_COLON_LEG)): token(getToken(COLON_LEG));
+                return inputMatch(':') ? token(getToken(DOUBLE_COLON)): token(getToken(COLON));
             }
             case '+': {
-                return inputMatch('+') ? token(getToken(INC_LEG)) : token(getToken(ANY_OPERATOR_LEG));
+                return inputMatch('+') ? token(getToken(INC)) : token(getToken(ANY_OPERATOR));
             }
             case '-': {
-                return inputMatch('-') ? token(getToken(DEC_LEG)) : token(getToken(ANY_OPERATOR_LEG));
+                return inputMatch('-') ? token(getToken(DEC)) : token(getToken(ANY_OPERATOR));
             }
         }
-        return token(getToken(ANY_OPERATOR_LEG));
+        return token(getToken(ANY_OPERATOR));
     }
 
     private org.netbeans.api.lexer.Token<CoffeeScriptTokenId> indentToken(int lineIndent) {
         if (lineIndent < indent) {
             indent = lineIndent;
-            return token(getToken(OUTDENT_LEG));
+            return token(getToken(OUTDENT));
         } else if (lineIndent > indent) {
             indent = lineIndent;
-            return token(getToken(INDENT_LEG));
+            return token(getToken(INDENT));
         }
-        return token(getToken(WHITESPACE_LEG));
+        return token(getToken(WHITESPACE));
     }
 
     /**

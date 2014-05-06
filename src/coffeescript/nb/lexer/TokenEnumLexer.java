@@ -1,62 +1,73 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+// Copyright 2014 Miloš Pensimus
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 package coffeescript.nb.lexer;
 
-import java.util.EnumSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
  *
- * @author milos
+ * @author Miloš Pensimus
  */
 public enum TokenEnumLexer {
     
-    ERROR_LEG(null,Category.ERROR_CAT),
-    NEW_LEG("new",Category.KEYWORD_CAT),
-    IDENTIFIER_LEG(null,Category.IDENTIFIER_CAT),
-    REGEX_LEG(null,Category.REGEXP_CAT),
-    HEREGEX_LEG(null,Category.REGEXP_CAT),
-    NUMBER_LEG(null,Category.NUMBER_CAT),
-    STRING_LEG(null,Category.STRING_CAT),
-    SIMPLE_STRING_LEG(null,Category.STRING_CAT),
-    JSTOKEN_LEG(null,Category.STRING_CAT),
-    BOOL_LEG(null,Category.KEYWORD_CAT),
-    WHITESPACE_LEG(null,Category.WHITESPACE_CAT),
-    INDENT_LEG(null,Category.WHITESPACE_CAT),
-    OUTDENT_LEG(null,Category.WHITESPACE_CAT),
-    EOL_LEG(null,Category.WHITESPACE_CAT),
-    COMMENT_LEG(null,Category.COMMENT_CAT),
-    LPAREN_LEG("(",Category.SEPARATOR_CAT),
-    RPAREN_LEG(")",Category.SEPARATOR_CAT),
-    LBRACE_LEG("{",Category.SEPARATOR_CAT),
-    RBRACE_LEG("}",Category.SEPARATOR_CAT),
-    LBRACKET_LEG("[",Category.SEPARATOR_CAT),
-    RBRACKET_LEG("]",Category.SEPARATOR_CAT),
-    ANY_KEYWORD_LEG(null,Category.KEYWORD_CAT),
-    ANY_OPERATOR_LEG(null,Category.OPERATOR_CAT),
-    QM_LEG("?",Category.OPERATOR_CAT),
-    DOT_LEG(".",Category.OPERATOR_CAT),
-    QDOT_LEG("?.",Category.OPERATOR_CAT),
-    THIS_LEG("this",Category.KEYWORD_CAT),
-    FOR_LEG("for",Category.KEYWORD_CAT),
-    IF_LEG("if",Category.KEYWORD_CAT),
-    ELSE_LEG("else",Category.KEYWORD_CAT),
-    WHILE_LEG("while",Category.KEYWORD_CAT),
-    CASE_LEG("case",Category.KEYWORD_CAT),
-    DEFAULT_LEG("default",Category.KEYWORD_CAT),
-    BREAK_LEG("break",Category.KEYWORD_CAT),
-    SWITCH_LEG("switch",Category.KEYWORD_CAT),
-    COLON_LEG(":",Category.OPERATOR_CAT),
-    DOUBLE_COLON_LEG("::",Category.OPERATOR_CAT),
-    SEMI_LEG(";",Category.OPERATOR_CAT),
-    FIELD_LEG(null,Category.FIELD_CAT),
-    DIV_LEG("/",Category.OPERATOR_CAT),
-    INC_LEG("++",Category.OPERATOR_CAT),
-    DEC_LEG("--",Category.OPERATOR_CAT),
-    AT_LEG("@",Category.KEYWORD_CAT);
+    ERROR(null,Category.ERROR_CAT),
+    FIELD(null,Category.FIELD_CAT),
+    IDENTIFIER(null,Category.IDENTIFIER_CAT),
+    REGEX(null,Category.REGEXP_CAT),
+    HEREGEX(null,Category.REGEXP_CAT),
+    NUMBER(null,Category.NUMBER_CAT),
+    STRING(null,Category.STRING_CAT),
+    SIMPLE_STRING(null,Category.STRING_CAT),
+    JSTOKEN(null,Category.STRING_CAT),
+    WHITESPACE(null,Category.WHITESPACE_CAT),
+    INDENT(null,Category.WHITESPACE_CAT),
+    OUTDENT(null,Category.WHITESPACE_CAT),
+    EOL(null,Category.WHITESPACE_CAT),
+    COMMENT(null,Category.COMMENT_CAT),
+    LPAREN("(",Category.SEPARATOR_CAT),
+    RPAREN(")",Category.SEPARATOR_CAT),
+    LBRACE("{",Category.SEPARATOR_CAT),
+    RBRACE("}",Category.SEPARATOR_CAT),
+    LBRACKET("[",Category.SEPARATOR_CAT),
+    RBRACKET("]",Category.SEPARATOR_CAT),
+    ANY_OPERATOR(null,Category.OPERATOR_CAT),
+    QM("?",Category.OPERATOR_CAT),
+    DOT(".",Category.OPERATOR_CAT),
+    QDOT("?.",Category.OPERATOR_CAT),
+    COLON(":",Category.OPERATOR_CAT),
+    DOUBLE_COLON("::",Category.OPERATOR_CAT),
+    QDOUBLE_COLON("?::",Category.OPERATOR_CAT),
+    SEMI(";",Category.OPERATOR_CAT),
+    DIV("/",Category.OPERATOR_CAT),
+    INC("++",Category.OPERATOR_CAT),
+    DEC("--",Category.OPERATOR_CAT),
+    AT("@",Category.KEYWORD_CAT),
+    THIS("this",Category.KEYWORD_CAT),
+    FOR("for",Category.KEYWORD_CAT),
+//    IF("if",Category.KEYWORD_CAT),
+//    ELSE("else",Category.KEYWORD_CAT),
+//    WHILE("while",Category.KEYWORD_CAT),
+    CASE("case",Category.KEYWORD_CAT),
+    DEFAULT("default",Category.KEYWORD_CAT),
+//    BREAK("break",Category.KEYWORD_CAT),
+//    SWITCH("switch",Category.KEYWORD_CAT),
+    NEW("new",Category.KEYWORD_CAT),    
+    EXTENDS("extends",Category.KEYWORD_CAT),
+    ANY_KEYWORD(null,Category.KEYWORD_CAT),
+    BOOL(null,Category.KEYWORD_CAT);
     
         
     private TokenEnumLexer(String fixedText, Category category) {
