@@ -14,20 +14,27 @@
 
 package coffeescript.nb.navigator.nodes;
 
-import coffeescript.nb.core.Constants;
-import org.openide.nodes.AbstractNode;
-import org.openide.nodes.Children;
+import coffeescript.nb.antlr.parser.definitions.Definition;
+import coffeescript.nb.core.CoffeeScriptUtils;
+import java.awt.event.ActionEvent;
+import javax.swing.AbstractAction;
 import org.openide.util.Lookup;
 
 /**
  *
  * @author Miloš Pensimus
  */
-public class RootNode extends AbstractNode {
+public class JumpToDefinitionAction extends AbstractAction {
+        private Lookup lookup;
+        private Definition definition;
+        
+        public JumpToDefinitionAction(Lookup lookup, Definition definition) {
+            this.lookup = lookup;
+            this.definition = definition;
+        }
 
-    public RootNode(String name,Children children, Lookup lookup) {
-        super(children, lookup);
-        this.setIconBaseWithExtension(Constants.COFFEE_SCRIPT_ICON);
-        this.setDisplayName(name);
-    }    
-}
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            CoffeeScriptUtils.jumpToDefinition(lookup, definition);
+        }
+    }

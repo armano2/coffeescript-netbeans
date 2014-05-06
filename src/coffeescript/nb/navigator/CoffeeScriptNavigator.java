@@ -1,47 +1,24 @@
-/*
- * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS HEADER.
- *
- * Copyright 2010 Sun Microsystems, Inc. All rights reserved.
- *
- * The contents of this file are subject to the terms of either the GNU
- * General Public License Version 2 only ("GPL") or the Common
- * Development and Distribution License("CDDL") (collectively, the
- * "License"). You may not use this file except in compliance with the
- * License. You can obtain a copy of the License at
- * http://www.netbeans.org/cddl-gplv2.html
- * or nbbuild/licenses/CDDL-GPL-2-CP. See the License for the
- * specific language governing permissions and limitations under the
- * License.  When distributing the software, include this License Header
- * Notice in each file and include the License file at
- * nbbuild/licenses/CDDL-GPL-2-CP.  Sun designates this
- * particular file as subject to the "Classpath" exception as provided
- * by Sun in the GPL Version 2 section of the License file that
- * accompanied this code. If applicable, add the following below the
- * License Header, with the fields enclosed by brackets [] replaced by
- * your own identifying information:
- * "Portions Copyrighted [year] [name of copyright owner]"
- *
- * If you wish your version of this file to be governed by only the CDDL
- * or only the GPL Version 2, indicate your decision by adding
- * "[Contributor] elects to include this software in this distribution
- * under the [CDDL or GPL Version 2] license." If you do not indicate a
- * single choice of license, a recipient has the option to distribute
- * your version of this file under either the CDDL, the GPL Version 2 or
- * to extend the choice of license to its licensees as provided above.
- * However, if you add GPL Version 2 code and therefore, elected the GPL
- * Version 2 license, then the option applies only if the new code is
- * made subject to such option by the copyright holder.
- *
- * Contributor(s):
- *
- * Portions Copyrighted 2010 Sun Microsystems, Inc.
- */
+// Copyright 2014 Miloš Pensimus
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 package coffeescript.nb.navigator;
 
 import coffeescript.nb.antlr.parser.definitions.CoffeeScriptFileDefinition;
 import coffeescript.nb.navigator.nodes.DefinitionChildren;
 import coffeescript.nb.core.CoffeeScriptDataObject;
 import coffeescript.nb.antlr.parser.definitions.Definition;
+import coffeescript.nb.core.Constants;
 import coffeescript.nb.navigator.nodes.RootNode;
 import coffeescript.nb.parser.ParseTask;
 import java.io.IOException;
@@ -80,32 +57,34 @@ import org.openide.util.WeakListeners;
 import org.openide.util.lookup.InstanceContent;
 
 /**
- * Basic dummy implementation of NavigatorPanel interface.
+ *
+ * @author Miloš Pensimus
  */
 public class CoffeeScriptNavigator implements NavigatorPanel {
 
     /* Dynamic Lookup content */
     private final InstanceContent ic;
-    /** Lookup instance */
-//    private final Lookup navigatorLookup;
-    /** holds UI of this panel */
     private NavPanel panel;
-    /** template for finding data in given context */
-    private Result<CoffeeScriptFileDefinition> grammarLookupResult;
+    /**
+     * template for finding data in given context
+     */
+    private Result<CoffeeScriptFileDefinition> coffeeScriptFileDefinitionLookupResult;
     private Result<CoffeeScriptDataObject> coffeeScriptDataObjectLookupResult;
     private Lookup contextLookup;
-    /** listener to context changes */
-    private CoffeeScriptDataObjectLookupListener abnfDataObjectLookupListener = null;
-    private LookupListener grammarDescriptorLookupListener;
+    /**
+     * listener to context changes
+     */
+    private CoffeeScriptDataObjectLookupListener coffeeScriptDataObjectLookupListener = null;
+    private LookupListener coffeeScriptFileDefinitionLookupListener;
     private DocumentListener documentListener = null;
     private CaretPositionListener caretListener;
     private int caretPosition = -1;
-    private EditorPropertyChangeLister editorPropertyChangeLister;
-    /** UI */
+    private EditorPropertyChangeListener editorPropertyChangeListener;
+    
     private final ExplorerManager manager = new ExplorerManager();
-    private BeanTreeView view = new BeanTreeView();
+    private final BeanTreeView view = new BeanTreeView();
     private RootNode rootNode;
-    /** Parsing stuff */
+
     private static final RequestProcessor parseRequestProcessor = new RequestProcessor("parse");
     private RequestProcessor.Task parsingTask;
     private boolean parsingValid = false;
@@ -133,12 +112,12 @@ public class CoffeeScriptNavigator implements NavigatorPanel {
 
     @Override
     public String getDisplayHint() {
-        return "coffeescript";
+        return "coffeescript"; //NOI18N
     }
 
     @Override
     public String getDisplayName() {
-        return "Navigator";
+        return "Navigator"; //NOI18N
     }
 
     @Override
@@ -149,15 +128,16 @@ public class CoffeeScriptNavigator implements NavigatorPanel {
         return panel;
     }
 
-    /** Called when this panel's component is about to being displayed.
-     * Right place to attach listeners to current navigation data context,
-     * as clients are responsible for listening to context changes when active
-     * (in the time between panelActivated - panelDeactivated calls).
+    /**
+     * Called when this panel's component is about to being displayed. Right
+     * place to attach listeners to current navigation data context, as clients
+     * are responsible for listening to context changes when active (in the time
+     * between panelActivated - panelDeactivated calls).
      *
      * This method is always called in event dispatch thread.
      *
-     * @param context Lookup instance representing current context to take
-     * data from
+     * @param context Lookup instance representing current context to take data
+     * from
      */
     @Override
     public void panelActivated(Lookup context) {
@@ -167,78 +147,23 @@ public class CoffeeScriptNavigator implements NavigatorPanel {
         this.coffeeScriptDataObjectLookupResult = context.lookupResult(CoffeeScriptDataObject.class);
         this.coffeeScriptDataObjectLookupResult.addLookupListener(getCoffeeScriptDataObjectLookupListener());
 
-        // notified when new grammar descriptor available
-        this.grammarLookupResult = context.lookupResult(CoffeeScriptFileDefinition.class);
-        this.grammarLookupResult.addLookupListener(getGrammarDescriptorLookupListener());
-        this.grammarLookupResult.allInstances(); // Required for triggering events!!!
-
-        // Force initialization since it waCoffeeScriptSourceEncodingQuerys not triggered yet
-//        newDataObject(this.coffeeScriptDataObjectLookupResult.allInstances());
-    }
-
-    private void registerEditorListeners(Lookup context) {
+        // notified when new file definition descriptor available
+        this.coffeeScriptFileDefinitionLookupResult = context.lookupResult(CoffeeScriptFileDefinition.class);
+        this.coffeeScriptFileDefinitionLookupResult.addLookupListener(getCoffeeScriptFileDefinitionLookupListener());
+        this.coffeeScriptFileDefinitionLookupResult.allInstances(); // Required for triggering events!!!
         
-        if(!EventQueue.isDispatchThread()) return;
-        EditorCookie ec = context.lookup(EditorCookie.class);
-        FileObject fo = context.lookup(FileObject.class);
-        if(fo == null || !fo.isValid()) return;
-        if (ec != null) {
-            StyledDocument styledDocument = ec.getDocument();
-            // force open document. Might never need this section of code
-            if (styledDocument == null) {
-                try {
-                    styledDocument = ec.openDocument();
-                } catch (IOException ex) {
-                    Exceptions.printStackTrace(ex);
-                }
-            }
-
-            if (styledDocument != null) {
-                // TODO: check if create each time a new document listener...
-                if (this.documentListener == null) {
-                    this.documentListener = new InvalidationDocumentLister();
-                    styledDocument.addDocumentListener(WeakListeners.create(DocumentListener.class, this.documentListener, styledDocument));
-                }
-
-                // Register caret listeners
-                JEditorPane[] panes = ec.getOpenedPanes();
-                if (panes != null) {
-                    JEditorPane pane = panes[0];
-                    if (pane != null) {
-                        this.caretListener = new CaretPositionListener();
-                        pane.addCaretListener(WeakListeners.create(CaretListener.class, this.caretListener, pane));
-                        // trigger caret position
-                        this.caretPosition = pane.getCaretPosition();
-                        updateSelectedRule();
-                    }
-                }
-            }
-        }
+        newDataObject(this.coffeeScriptDataObjectLookupResult.allInstances());
     }
 
-    private void unregisterListeners() {
-        this.editorPropertyChangeLister = null;
-        this.documentListener = null;
-        this.caretListener = null;
-        this.caretPosition = -1;
-        this.parsingValid = false;
-    }
-
-    /** Called when this panel's component is about to being hidden.
-     * Right place to detach, remove listeners from data context, that
-     * were added in panelActivated impl.
-     *
-     * This method is always called in event dispatch thread.
-     */
     @Override
     public void panelDeactivated() {
-        this.grammarLookupResult.removeLookupListener(getGrammarDescriptorLookupListener());
-        this.grammarLookupResult = null;
-        this.grammarDescriptorLookupListener = null;
+        this.coffeeScriptFileDefinitionLookupResult.removeLookupListener(getCoffeeScriptFileDefinitionLookupListener());
+        this.coffeeScriptFileDefinitionLookupResult = null;
+        this.coffeeScriptFileDefinitionLookupListener = null;
 
         this.coffeeScriptDataObjectLookupResult.removeLookupListener(getCoffeeScriptDataObjectLookupListener());
         this.coffeeScriptDataObjectLookupResult = null;
-        this.abnfDataObjectLookupListener = null;
+        this.coffeeScriptDataObjectLookupListener = null;
 
         this.contextLookup = null;
         unregisterListeners();
@@ -251,25 +176,75 @@ public class CoffeeScriptNavigator implements NavigatorPanel {
     public Lookup getLookup() {
         return null;
     }
+    
+    private void registerEditorListeners(Lookup context) {
 
-    /************* non - public part ************/
-    private static Node createWaitNode() {
+        if (!EventQueue.isDispatchThread()) {
+            return;
+        }
+        EditorCookie ec = context.lookup(EditorCookie.class);
+        FileObject fo = context.lookup(FileObject.class);
+        if (fo == null || !fo.isValid()) {
+            return;
+        }
+        if (ec != null) {
+            StyledDocument styledDocument = ec.getDocument();
+            // force open document. Might never need this section of code
+            if (styledDocument == null) {
+                try {
+                    styledDocument = ec.openDocument();
+                } catch (IOException ex) {
+                    Exceptions.printStackTrace(ex);
+                }
+            }
+
+            if (styledDocument != null) {
+                if (this.documentListener == null) {
+                    this.documentListener = new InvalidationDocumentListener();
+                    styledDocument.addDocumentListener(WeakListeners.create(DocumentListener.class, this.documentListener, styledDocument));
+                }
+
+                // Register caret listeners
+                JEditorPane[] panes = ec.getOpenedPanes();
+                if (panes != null) {
+                    JEditorPane pane = panes[0];
+                    if (pane != null) {
+                        this.caretListener = new CaretPositionListener();
+                        pane.addCaretListener(WeakListeners.create(CaretListener.class, this.caretListener, pane));
+                        // trigger caret position
+                        this.caretPosition = pane.getCaretPosition();
+                        updateSelectedDefinition();
+                    }
+                }
+            }
+        }
+    }
+
+    private void unregisterListeners() {
+        this.editorPropertyChangeListener = null;
+        this.documentListener = null;
+        this.caretListener = null;
+        this.caretPosition = -1;
+        this.parsingValid = false;
+    }
+
+    private Node createWaitNode() {
         AbstractNode an = new AbstractNode(Children.LEAF);
-        an.setIconBaseWithExtension("coffeescript/nb/resources/wait.gif"); //NOI18N
+        an.setIconBaseWithExtension(Constants.WAIT_ICON);
         an.setDisplayName(NbBundle.getMessage(CoffeeScriptNavigator.class, "LBL_Wait"));
         return an;
     }
 
-    private void newGrammar(Collection<? extends CoffeeScriptFileDefinition> newData) {
+    private void newFileDefinition(Collection<? extends CoffeeScriptFileDefinition> newData) {
         if (newData.size() > 0) {
-            CoffeeScriptFileDefinition grammarDescriptor = newData.toArray(new CoffeeScriptFileDefinition[0])[0];            
-            List<Definition> ruleNameDescriptor = grammarDescriptor.getRootDefinitions();
-            if (ruleNameDescriptor != null) {                
-                rootNode = new RootNode (
-                        grammarDescriptor.getFileName(), 
-                        new DefinitionChildren(ruleNameDescriptor, contextLookup), 
+            CoffeeScriptFileDefinition fileDefinition = newData.toArray(new CoffeeScriptFileDefinition[0])[0];
+            List<Definition> definitions = fileDefinition.getRootDefinitions();
+            if (definitions != null) {
+                rootNode = new RootNode(
+                        fileDefinition.getFileName(),
+                        new DefinitionChildren(definitions, contextLookup),
                         contextLookup
-                        );
+                );
                 Runnable updateTree = new Runnable() {
 
                     @Override
@@ -285,7 +260,7 @@ public class CoffeeScriptNavigator implements NavigatorPanel {
                         } else {
                             // selected node should change after new data arrived..
                             parsingValid = true;
-                            updateSelectedRule();
+                            updateSelectedDefinition();
                         }
                     }
                 };
@@ -311,7 +286,7 @@ public class CoffeeScriptNavigator implements NavigatorPanel {
                 this.panel.showWaitNode();
             }
 
-            // update nodes with existing grammar if available
+            // update nodes with existing file definition if available
             EditorCookie ec = dataObjectLookup.lookup(EditorCookie.class);
             if (ec == null) {
                 return;
@@ -319,20 +294,20 @@ public class CoffeeScriptNavigator implements NavigatorPanel {
 
             // Detects when editor actually opens -> register document listener
             EditorCookie.Observable obs = dataObjectLookup.lookup(EditorCookie.Observable.class);
-            this.editorPropertyChangeLister = new EditorPropertyChangeLister(dataObjectLookup);
-            obs.addPropertyChangeListener(WeakListeners.create(PropertyChangeListener.class, this.editorPropertyChangeLister, obs));
+            this.editorPropertyChangeListener = new EditorPropertyChangeListener(dataObjectLookup);
+            obs.addPropertyChangeListener(WeakListeners.create(PropertyChangeListener.class, this.editorPropertyChangeListener, obs));
 
-            Collection<? extends CoffeeScriptFileDefinition> grammarCollection = dataObjectLookup.lookupAll(CoffeeScriptFileDefinition.class);
-            if (grammarCollection.size() > 0) {
+            Collection<? extends CoffeeScriptFileDefinition> fileDefinitionCollection = dataObjectLookup.lookupAll(CoffeeScriptFileDefinition.class);
+            if (fileDefinitionCollection.size() > 0) {
                 parsingValid = true;
-                newGrammar(grammarCollection);
+                newFileDefinition(fileDefinitionCollection);
             }
 
             StyledDocument doc = ec.getDocument();
             if (doc == null) {
                 // editor not opened yet. Probably selecting an ABNF file in the project view
                 // try to parse document
-                if (grammarCollection.isEmpty()) {
+                if (fileDefinitionCollection.isEmpty()) {
                     // Don't need to reparse when already parsed but editor still not open
                     parsingTask = parseRequestProcessor.create(new ParseTask(dataObject));
                     parsingTask.schedule(1000);
@@ -343,23 +318,27 @@ public class CoffeeScriptNavigator implements NavigatorPanel {
         }
     }
 
-    /** Accessor for listener to context */
-    private LookupListener getGrammarDescriptorLookupListener() {
-        if (grammarDescriptorLookupListener == null) {
-            grammarDescriptorLookupListener = new GrammarDescriptorContextListener();
+    /**
+     * Accessor for listener to context
+     */
+    private LookupListener getCoffeeScriptFileDefinitionLookupListener() {
+        if (coffeeScriptFileDefinitionLookupListener == null) {
+            coffeeScriptFileDefinitionLookupListener = new CoffeeScriptFileDefinitionContextListener();
         }
-        return grammarDescriptorLookupListener;
+        return coffeeScriptFileDefinitionLookupListener;
     }
 
     private LookupListener getCoffeeScriptDataObjectLookupListener() {
-        if (abnfDataObjectLookupListener == null) {
-            abnfDataObjectLookupListener = new CoffeeScriptDataObjectLookupListener();
+        if (coffeeScriptDataObjectLookupListener == null) {
+            coffeeScriptDataObjectLookupListener = new CoffeeScriptDataObjectLookupListener();
         }
-        return abnfDataObjectLookupListener;
+        return coffeeScriptDataObjectLookupListener;
     }
 
-    private void updateSelectedRule() {
-        if(!EventQueue.isDispatchThread()) return;
+    private void updateSelectedDefinition() {
+        if (!EventQueue.isDispatchThread()) {
+            return;
+        }
         int position = this.caretPosition;
         if (position < 0) {
             return;
@@ -369,13 +348,15 @@ public class CoffeeScriptNavigator implements NavigatorPanel {
             try {
                 DefinitionChildren children = (DefinitionChildren) rootNode.getChildren();
                 EditorCookie ec = rootNode.getLookup().lookup(EditorCookie.class);
-                StyledDocument doc = ec.openDocument();
+                ec.openDocument();
                 for (Node node : children.snapshot()) {
-                    Definition ruleDescriptor = node.getLookup().lookup(Definition.class);
-                    if (ruleDescriptor == null) return;
-                    int start = ruleDescriptor.getStartOffset();
-                    int end = ruleDescriptor.getEndOffset();
-                    if ((position >= start) && (position <= end)) {
+                    Definition definition = node.getLookup().lookup(Definition.class);
+                    if (definition == null) {
+                        return;
+                    }
+                    int start = definition.getStartOffset();
+                    int end = definition.getEndOffset();
+                    if ((position >= start) && (position < end)) {
                         try {
                             manager.setSelectedNodes(new Node[]{node});
                         } catch (PropertyVetoException ex) {
@@ -390,13 +371,15 @@ public class CoffeeScriptNavigator implements NavigatorPanel {
         }
     }
 
-    /** Listens to changes of context and triggers proper action */
-    private class GrammarDescriptorContextListener implements LookupListener {
+    /**
+     * Listens to changes of context and triggers proper action
+     */
+    private class CoffeeScriptFileDefinitionContextListener implements LookupListener {
 
         @Override
         public void resultChanged(LookupEvent ev) {
-            Collection<? extends CoffeeScriptFileDefinition> data = grammarLookupResult.allInstances();
-            newGrammar(data);
+            Collection<? extends CoffeeScriptFileDefinition> data = coffeeScriptFileDefinitionLookupResult.allInstances();
+            newFileDefinition(data);
         }
     }
 
@@ -409,17 +392,19 @@ public class CoffeeScriptNavigator implements NavigatorPanel {
         }
     }
 
-    /** Listens to caret position in document and select proper rule in navigator */
+    /**
+     * Listens to caret position in document and select proper definition in navigator
+     */
     private class CaretPositionListener implements CaretListener {
 
         @Override
         public void caretUpdate(CaretEvent e) {
             CoffeeScriptNavigator.this.caretPosition = e.getDot();
-            updateSelectedRule();
+            updateSelectedDefinition();
         }
     }
 
-    private class InvalidationDocumentLister implements DocumentListener {
+    private class InvalidationDocumentListener implements DocumentListener {
 
         @Override
         public void insertUpdate(DocumentEvent e) {
@@ -437,11 +422,11 @@ public class CoffeeScriptNavigator implements NavigatorPanel {
         }
     }
 
-    private class EditorPropertyChangeLister implements PropertyChangeListener {
+    private class EditorPropertyChangeListener implements PropertyChangeListener {
 
         final Lookup lookup;
 
-        public EditorPropertyChangeLister(Lookup lookup) {
+        public EditorPropertyChangeListener(Lookup lookup) {
             this.lookup = lookup;
         }
 
@@ -453,7 +438,7 @@ public class CoffeeScriptNavigator implements NavigatorPanel {
         }
     }
 
-    class NavPanel extends JPanel implements ExplorerManager.Provider, Lookup.Provider {
+    private class NavPanel extends JPanel implements ExplorerManager.Provider {
 
         public NavPanel() {
             view.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -470,11 +455,6 @@ public class CoffeeScriptNavigator implements NavigatorPanel {
         @Override
         public ExplorerManager getExplorerManager() {
             return manager;
-        }
-
-        @Override
-        public Lookup getLookup() {
-            return null;
         }
 
         private void showWaitNode() {
