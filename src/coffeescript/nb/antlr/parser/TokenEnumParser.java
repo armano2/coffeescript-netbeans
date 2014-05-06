@@ -1,14 +1,22 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-package coffeescript.nb.antlr.parser;
+// Copyright 2014 Miloš Pensimus
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
 
-import java.util.logging.Logger;
+package coffeescript.nb.antlr.parser;
 
 /**
  *
- * @author milos
+ * @author Miloš Pensimus
  */
 public enum TokenEnumParser {
 
@@ -36,79 +44,80 @@ public enum TokenEnumParser {
     EQUATING_TOK("="),
     FUNC_DOUBLE_ARROW("=>"),
     QUEST_TOK("?"),
-    TERMINATOR(null),
-    STATEMENT(null),
-    POST_IF(null),
-    ELSE(null),
-    INDENT(null),
-    OUTDENT(null),
+    TERMINATOR,
+    STATEMENT,
+    POST_IF,
+    ELSE,
+    INDENT,
+    OUTDENT,
     IDENTIFIER(null),
     NUMBER(null),
     STRING(null),
-    JS(null),
-    REGEX(null),
-    DEBUGGER(null),
-    UNDEFINED(null),
-    NULL(null),
-    BOOL(null),
-    RETURN(null),
-    HERECOMMENT(null),
-    PARAM_START(null),
-    PARAM_END(null),
-    SUPER(null),
-    INDEX_START(null),
-    INDEX_END(null),
-    INDEX_SOAK(null),
-    CLASS(null),
-    EXTENDS(null),
-    FUNC_EXIST(null),
-    CALL_START(null),
-    CALL_END(null),
-    THIS(null),
-    TRY(null),
-    FINALLY(null),
-    CATCH(null),
-    THROW(null),
-    WHILE(null),
-    WHEN(null),
-    UNTIL(null),
-    LOOP(null),
-    FOR(null),
-    OWN(null),
-    FORIN(null),
-    FOROF(null),
-    BY(null),
-    SWITCH(null),
-    LEADING_WHEN(null),
-    IF(null),
-    UNARY(null),
-    UNARY_MATH(null),
-    COMPOUND_ASSIGN(null),
-    MATH(null),
-    SHIFT(null),
-    COMPARE(null),
-    LOGIC(null),
-    RELATION(null),
-    BAD_TOKEN(null);
+    JS,
+    REGEX,
+    DEBUGGER,
+    UNDEFINED,
+    NULL,
+    BOOL,
+    RETURN,
+    HERECOMMENT,
+    PARAM_START,
+    PARAM_END,
+    SUPER,
+    INDEX_START,
+    INDEX_END,
+    INDEX_SOAK,
+    CLASS,
+    EXTENDS,
+    FUNC_EXIST,
+    CALL_START,
+    CALL_END,
+    THIS,
+    TRY,
+    FINALLY,
+    CATCH,
+    THROW,
+    WHILE,
+    WHEN,
+    UNTIL,
+    LOOP,
+    FOR,
+    OWN,
+    FORIN,
+    FOROF,
+    BY,
+    SWITCH,
+    LEADING_WHEN,
+    IF,
+    UNARY,
+    UNARY_MATH,
+    COMPOUND_ASSIGN,
+    MATH,
+    SHIFT,
+    COMPARE,
+    LOGIC,
+    RELATION,
+    BAD_TOKEN;
+    
         
     private TokenEnumParser(String text) {
         this.text = text;
+        this.showTokenValue = true;
     }
-    private Category category;
+    
+    private TokenEnumParser() {
+        this.showTokenValue = false;
+    }
     private String text;
-    private static final Logger logger = Logger.getLogger(TokenEnumParser.class.getName());
-
-    public Category getCategory() {
-        return category;
-    }
-
+    private final boolean showTokenValue;
+    
     public String getText() {
         return text;
     }
 
-    public void setText(String text) {
-        this.text = text;
-    }    
+    public boolean isShowTokenValue() {
+        return showTokenValue;
+    }
     
     public static TokenEnumParser tokenValue(String name) {
         try {
@@ -118,30 +127,7 @@ public enum TokenEnumParser {
                 if(name.equals(en.getText())) 
                     return en;
             }
-            return null;
+            return BAD_TOKEN;
         }
-    }
-    
-    public static enum Category {
-        COMMENT_CAT("comment"),
-        KEYWORD_CAT("keyword"),
-        REGEXP_CAT("regexp"),
-        STRING_CAT("string"),
-        WHITESPACE_CAT("whitespace"),
-        OPERATOR_CAT("operator"),
-        SEPARATOR_CAT("separator"),
-        ERROR_CAT("error"),
-        NUMBER_CAT("number"),
-        IDENTIFIER_CAT("identifier"),
-        FIELD_CAT("field");
-        private String name;
-
-        private Category(String name) {
-            this.name = name;
-        }
-
-        public String getName() {
-            return name;
-        }
-    }    
+    }  
 }
