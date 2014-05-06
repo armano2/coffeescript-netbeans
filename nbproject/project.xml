@@ -46,7 +46,7 @@
                     <compile-dependency/>
                     <run-dependency>
                         <release-version>2</release-version>
-                        <specification-version>2.14.1.2.1.1.6</specification-version>
+                        <implementation-version/>
                     </run-dependency>
                 </dependency>
                 <dependency>
@@ -131,12 +131,39 @@
                     </run-dependency>
                 </dependency>
                 <dependency>
+                    <code-name-base>org.netbeans.modules.jellytools.platform</code-name-base>
+                    <build-prerequisite/>
+                    <compile-dependency/>
+                    <run-dependency>
+                        <release-version>3</release-version>
+                        <specification-version>3.19.1</specification-version>
+                    </run-dependency>
+                </dependency>
+                <dependency>
+                    <code-name-base>org.netbeans.modules.jemmy</code-name-base>
+                    <build-prerequisite/>
+                    <compile-dependency/>
+                    <run-dependency>
+                        <release-version>3</release-version>
+                        <specification-version>3.21.1</specification-version>
+                    </run-dependency>
+                </dependency>
+                <dependency>
                     <code-name-base>org.netbeans.modules.lexer</code-name-base>
                     <build-prerequisite/>
                     <compile-dependency/>
                     <run-dependency>
                         <release-version>2</release-version>
                         <specification-version>1.38.1.1</specification-version>
+                    </run-dependency>
+                </dependency>
+                <dependency>
+                    <code-name-base>org.netbeans.modules.nbjunit</code-name-base>
+                    <build-prerequisite/>
+                    <compile-dependency/>
+                    <run-dependency>
+                        <release-version>1</release-version>
+                        <specification-version>1.81.1</specification-version>
                     </run-dependency>
                 </dependency>
                 <dependency>
@@ -295,7 +322,7 @@
                     <build-prerequisite/>
                     <compile-dependency/>
                     <run-dependency>
-                        <implementation-version/>
+                        <specification-version>6.65.1</specification-version>
                     </run-dependency>
                 </dependency>
             </module-dependencies>
@@ -310,16 +337,16 @@
             </test-dependencies>
             <public-packages/>
             <class-path-extension>
+                <runtime-relative-path>ext/antlr-4.1-dev-complete.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/antlr-4.1-dev-complete.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
                 <runtime-relative-path>ext/js.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/js.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/CoffeeScriptLexerRewrite.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/CoffeeScriptLexerRewrite.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/antlr-4.2.2-runtime.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/antlr-4.2.2-runtime.jar</binary-origin>
             </class-path-extension>
         </data>
     </configuration>
