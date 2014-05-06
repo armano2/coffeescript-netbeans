@@ -1,15 +1,24 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
+// Copyright 2014 Miloš Pensimus
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 package coffeescript.nb.antlr.parser.definitions;
 
-import coffeescript.nb.completion.items.MethodCompletionItem;
-import coffeescript.nb.indexing.CoffeeScriptIndex;
+import coffeescript.nb.completion.CompletionContext;
+import coffeescript.nb.completion.items.CompletionItemsFactory;
 import coffeescript.nb.indexing.IndexedDefinitionFactory;
 import coffeescript.nb.navigator.nodes.MethodNode;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import org.netbeans.spi.editor.completion.CompletionItem;
 import org.openide.nodes.Node;
@@ -17,18 +26,18 @@ import org.openide.util.Lookup;
 
 /**
  *
- * @author milos
+ * @author Miloš Pensimus
  */
 public class MethodDefinition extends Definition {
     
-    private List<Definition> params;
-    private boolean anonymous;
-    private boolean thisMethod;
+    private final List<Definition> params;
+    private final boolean anonymous;
+    private String className;
 
     public MethodDefinition(String text, int startOffset, int endOffset, int blockStartOffset, int blockEndOffset, boolean classMember, List<Definition> params, boolean anonymous) {
         super(text, startOffset, endOffset, blockStartOffset, blockEndOffset, classMember);
         this.params = params;
-        this.anonymous = anonymous;        
+        this.anonymous = anonymous;    
     }
 
     public List<Definition> getParams() {
@@ -51,9 +60,17 @@ public class MethodDefinition extends Definition {
         return sb.toString();
     }
 
-    public void setThisMethod(boolean thisMethod) {
-        this.thisMethod = thisMethod;
+    public String getClassName() {
+        return className;
     }
+
+    public void setClassName(String className) {
+        this.className = className;
+    }    
+
+    public boolean isAnonymous() {
+        return anonymous;
+    }    
 
     @Override
     public Node getNode(Lookup lookup) {
@@ -61,9 +78,8 @@ public class MethodDefinition extends Definition {
     }
 
     @Override
-    public Collection<CompletionItem> getCompletionItems(String fileName, int startOffset, int caretOffset, boolean decreasePriority) {
-        String optionalAt = (thisMethod) ? "@" : "";
-        return Collections.<CompletionItem>singletonList(new MethodCompletionItem(optionalAt + text + getParamString(), fileName, startOffset, caretOffset, decreasePriority));
+    public Collection<CompletionItem> getCompletionItems(int startOffset, int caretOffset, CompletionContext context) {
+        return CompletionItemsFactory.create(this, startOffset, caretOffset, context);
     }    
 
     @Override
@@ -85,10 +101,13 @@ public class MethodDefinition extends Definition {
         sb.append(IndexedDefinitionFactory.METHOD_DELIM);
         sb.append(anonymous);
         sb.append(IndexedDefinitionFactory.METHOD_DELIM);
+        sb.append(className);   
+        sb.append(IndexedDefinitionFactory.METHOD_DELIM);
         for(Definition d : params) {
             sb.append(d.serialize());
             sb.append(IndexedDefinitionFactory.METHOD_DELIM);
         }        
+         
         return sb.toString();
     }
 
