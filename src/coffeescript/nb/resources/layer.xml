@@ -65,7 +65,7 @@
                 <folder name="Factories">
                     <file name="CoffeeScriptDataLoader.instance">
                         <attr name="dataObjectClass" stringvalue="coffeescript.nb.core.CoffeeScriptDataObject"/>
-                        <attr name="iconBase" stringvalue="coffeescript/nb/resources/coffeescript-icon.png"/>
+                        <attr name="iconBase" stringvalue="coffeescript/nb/resources/icons/coffeescript-icon.png"/>
                         <attr name="instanceCreate" methodvalue="org.openide.loaders.DataLoaderPool.factory"/>
                         <attr name="mimeType" stringvalue="text/coffeescript"/>
                     </file>
@@ -74,10 +74,10 @@
         </folder>
     </folder>
     <folder name="Editors">
-        <file name="coffeescript-nb-core-CoffeeScriptEmbeddingProvidersFactory.instance"/>
+        <file name="coffeescript-nb-core-embedding-CoffeeScriptEmbeddingProvidersFactory.instance"/>
         <folder name="text">
             <folder name="html">
-                <file name="coffeescript-nb-core-CoffeeScriptHTMLParserTask$Factory.instance"/>
+                <file name="coffeescript-nb-core-embedding-CoffeeScriptHTMLParserTask$Factory.instance"/>
             </folder>
             <folder name="coffeescript">
                 <attr name="SystemFileSystem.localizingBundle" stringvalue="coffeescript.nb.resources.Bundle"/>
@@ -86,12 +86,13 @@
                     <attr name="instanceOf" stringvalue="org.netbeans.api.lexer.Language"/>
                 </file>
                 <folder name="BracesMatchers">
-                    <file name="coffeescript-nb-lexer-CoffeeScriptBracesMatcher$Factory.instance">
+                    <file name="coffeescript-nb-bracesmatching-CoffeeScriptBracesMatcher$Factory.instance">
                         <attr name="position" intvalue="0"/>
                     </file>
                 </folder>
-                <file name="coffeescript-nb-parser-SyntaxErrorsHighlightingTaskFactory.instance"/> 
-                <file name="coffeescript-nb-parser-AddFileDefinitionToContextTaskFactory.instance"/>
+                <file name="coffeescript-nb-parser-tasks-SyntaxErrorsHighlightingTask$Factory.instance"/> 
+                <file name="coffeescript-nb-parser-tasks-AddFileDefinitionToDataObjectTask$Factory.instance"/>
+                <file name="coffeescript-nb-parser-tasks-CoffeeScriptAutocompileTask$Factory.instance"/>
                 <folder name="FontsColors">
                     <folder name="NetBeans">
                         <folder name="Defaults">
@@ -112,13 +113,13 @@
             </folder>
             <folder name="coffeescript-string">
                 <file name="coffeescript-string.instance">
-                    <attr name="instanceCreate" methodvalue="coffeescript.nb.core.CoffeeScriptStringLanguage.getLanguage"/>
+                    <attr name="instanceCreate" methodvalue="coffeescript.nb.core.embedding.CoffeeScriptStringLanguage.getLanguage"/>
                     <attr name="instanceOf" stringvalue="org.netbeans.api.lexer.Language"/>
                 </file>
             </folder>
             <folder name="coffeescript-regexp">
                 <file name="coffeescript-regexp.instance">
-                    <attr name="instanceCreate" methodvalue="coffeescript.nb.core.CoffeeScriptRegexpLanguage.getLanguage"/>
+                    <attr name="instanceCreate" methodvalue="coffeescript.nb.core.embedding.CoffeeScriptRegexpLanguage.getLanguage"/>
                     <attr name="instanceOf" stringvalue="org.netbeans.api.lexer.Language"/>
                 </file>
                 <folder name="FontsColors">
@@ -135,8 +136,6 @@
     </folder>
     <folder name="Navigator">
         <folder name="Panels">
-             <!--Sudirectory structure below represents content type in mime type syntax.
-                 Replace with content type your navigator view will show  -->
             <folder name="text">
                 <folder name="coffeescript">
                     <file name="coffeescript-nb-navigator-CoffeeScriptNavigator.instance">
@@ -147,6 +146,7 @@
             </folder>
         </folder>
     </folder>
+    
     <folder name="OptionsDialog">
         <folder name="Editor">
             <folder name="Formatting">
@@ -182,7 +182,7 @@
             <folder name="CoffeeScript">
                 <file name="CoffeeScriptApplicationProject.zip" url="CoffeeScriptApplicationProject.zip">
                     <attr name="displayName" bundlevalue="coffeescript.nb.resources.Bundle#Templates/Project/CoffeeScript/CoffeeScriptApplicationProject.zip"/>
-                    <attr name="iconBase" stringvalue="coffeescript/nb/resources/coffeescript-icon.png"/>
+                    <attr name="iconBase" stringvalue="coffeescript/nb/resources/icons/coffeescript-icon.png"/>
                     <attr name="instantiatingIterator" methodvalue="coffeescript.nb.project.sample.CoffeeScriptApplicationWizardIterator.createIterator"/>
                     <attr name="instantiatingWizardURL" urlvalue="nbresloc:/coffeescript/nb/project/sample/CoffeeScriptApplicationProjectDescription.html"/>
                     <attr name="template" boolvalue="true"/>
