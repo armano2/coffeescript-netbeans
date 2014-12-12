@@ -1,0 +1,1 @@
+antlr -o ../src/coffeescript/nb/antlr/parser/generated -listener -package coffeescript.nb.antlr.parser.generated CoffeeScriptParserGrammar.g4

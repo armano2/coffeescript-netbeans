@@ -22,7 +22,7 @@ import org.openide.util.Lookup;
 
 /**
  *
- * @author Denis Stepanov
+ * @author Denis Stepanov & Miloš Pensimus
  */
 @OptionsPanelController.SubRegistration(id = "CoffeeScript",
 displayName = "coffeescript.nb.resources.Bundle#CoffeeScriptOptions.displayName",

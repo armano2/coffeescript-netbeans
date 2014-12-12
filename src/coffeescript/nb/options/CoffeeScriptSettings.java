@@ -13,15 +13,15 @@
 // limitations under the License.
 package coffeescript.nb.options;
 
-import coffeescript.nb.CoffeeScriptCompiler;
-import coffeescript.nb.CoffeeScriptNodeJSCompiler;
-import coffeescript.nb.CoffeeScriptRhinoCompiler;
+import coffeescript.nb.core.CoffeeScriptCompiler;
+import coffeescript.nb.core.CoffeeScriptNodeJSCompiler;
+import coffeescript.nb.core.CoffeeScriptRhinoCompiler;
 import java.util.prefs.Preferences;
 import org.openide.util.NbPreferences;
 
 /**
  *
- * @author Denis Stepanov
+ * @author Denis Stepanov & Miloš Pensimus
  */
 public class CoffeeScriptSettings {
 
@@ -90,11 +90,27 @@ public class CoffeeScriptSettings {
         }
         return null;
     }
+    
+    public boolean isLegacy() {
+        return getPreferences().getBoolean("legacySupport", false);
+    }
+
+    public void setLegacy(boolean selected) {
+        getPreferences().putBoolean("legacySupport", selected);
+    }
+    
+    public boolean isShowCompilerWarning() {
+        return getPreferences().getBoolean("showCompilerWarning", true);
+    }
+
+    public void setShowCompilerWarning(boolean showCompilerWarning) {
+        getPreferences().putBoolean("showCompilerWarning", showCompilerWarning);
+    }
 
     public enum CompilerType {
 
-        RHINO("Rhino (JavaScript for Java)"),
-        NODEJS("CoffeeScript (Node.js)");
+        RHINO("Rhino (JavaScript for Java)"), //NOI18N
+        NODEJS("CoffeeScript (Node.js)"); //NOI18N
         private final String label;
 
         private CompilerType(String label) {
